@@ -1,1 +1,0 @@
-/usr/bin/g++ -Wl,--dependency-file=CMakeFiles/sencd.dir/link.d CMakeFiles/sencd.dir/core/core.cpp.o -o sencd

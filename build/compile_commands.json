@@ -1,8 +1,0 @@
-[
-{
-  "directory": "/home/clint/projects/sencd/build",
-  "command": "/usr/bin/g++   -std=gnu++17 -o CMakeFiles/sencd.dir/core/core.cpp.o -c /home/clint/projects/sencd/core/core.cpp",
-  "file": "/home/clint/projects/sencd/core/core.cpp",
-  "output": "CMakeFiles/sencd.dir/core/core.cpp.o"
-}
-]

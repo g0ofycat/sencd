@@ -1,3 +1,0 @@
-/home/clint/projects/sencd/build/CMakeFiles/sencd.dir
-/home/clint/projects/sencd/build/CMakeFiles/edit_cache.dir
-/home/clint/projects/sencd/build/CMakeFiles/rebuild_cache.dir
