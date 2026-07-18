@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/clint/projects/sencd/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
