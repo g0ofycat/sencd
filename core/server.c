@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
 				"usage: sencd-server <options> <argv>?\n\n"
 				"options:\n"
 				"- CORE:\n"
-				"-    start [Start the Server]\n"
+				"-    start <argv='PORT NUMBER': default='8080'> [Start the Server on an optional port]\n"
 				"-    shutdown [Stop the Server, disconnecting all clients if needed]\n"
 				"- MANAGEMENT:\n"
 				"-    list [List all clients connected to the current server]\n"
