@@ -1,5 +1,5 @@
-#ifndef START_H
-#define START_H
+#ifndef CORE_CLIENT_H
+#define CORE_CLIENT_H
 
 #include <arpa/inet.h>
 
@@ -13,7 +13,7 @@
 // -- CONSTS
 //--============
 
-#define DEFAULT_PORT 8080
+#define CLIENT_DEFAULT_PORT 8080
 
 //--============
 // -- TYPEDEFS

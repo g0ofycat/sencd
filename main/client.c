@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../src/client/core.h"
+#include "../src/client/client_core.h"
 
 int main(int argc, char* argv[]) {
 	if (argc < 2) {
@@ -24,11 +24,10 @@ int main(int argc, char* argv[]) {
 				"-    rcontrol <argv='SERVER PASSWORD SET USING setpwd'> [Remotely control the current server, if any]\n"
 			  );
 	} else {
-		// TODO: actually create a parser for commands. src/commands
-		// for server: create env so sub-commands work as normal commands and also change command prefix to smt like "sencd-server >"
-		CONNECTION_T server;
-		connection_init(&server);
-		connection_connect(&server, "127.0.0.1", DEFAULT_PORT);
+		CONNECTION_T conn;
+		connection_init(&conn);
+		connection_connect(&conn, "127.0.0.1", CLIENT_DEFAULT_PORT);
+		connection_disconnect(&conn);
 	}
 	return 0;
 }

@@ -1,4 +1,4 @@
-#include "core.h"
+#include "client_core.h"
 
 //--============
 // -- PRIVATE
@@ -99,6 +99,10 @@ ssize_t connection_receive(CONNECTION_T *connection, void *buffer, size_t length
 
 	return rec;
 }
+
+//--============
+// -- INTERNAL
+//--============
 
 static int connection_create_socket(CONNECTION_T *connection) {
 	connection->socket = socket(AF_INET, SOCK_STREAM, 0);

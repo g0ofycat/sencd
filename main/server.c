@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../src/server/server_core.h"
+
 int main(int argc, char* argv[]) {
 	if (argc < 2) {
 		printf("sencd-server: Server for managing clients and rerouting internet traffic.\n- RELEASE: v.1.0.0\n- Add '--help' to this command see a list of all sub-commands\n");
@@ -21,7 +23,14 @@ int main(int argc, char* argv[]) {
 				"-    setpwd [Set the administrator password, mainly used for remote control access on the client]\n"
 			  );
 	} else {
-		printf("sencd-server: Unknown command\n");
+		// for server: create env so sub-commands work as normal commands and also change command prefix to smt like "sencd-server >"
+		SERVER_T server;
+		server_init(&server);
+		server_start(&server, SERVER_DEFAULT_PORT);
+		int client = server_accept(&server);
+		if (client >= 0)
+			close(client);
+		server_shutdown(&server);
 	}
 	return 0;
 }

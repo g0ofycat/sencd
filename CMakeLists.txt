@@ -5,9 +5,9 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(sencd-client
-	core/client.c
+	main/client.c
 	src/debug/logs.c
-	src/client/core.c
+	src/client/client_core.c
 )
 
 target_include_directories(sencd-client PRIVATE
@@ -17,8 +17,9 @@ target_include_directories(sencd-client PRIVATE
 )
 
 add_executable(sencd-server
-	core/server.c
+	main/server.c
 	src/debug/logs.c
+	src/server/server_core.c
 )
 
 target_include_directories(sencd-server PRIVATE
