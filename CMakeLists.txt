@@ -7,27 +7,31 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(sencd-client
 	main/client.c
 	src/debug/logs.c
+	src/server/serverinit/idle.c
 	src/client/client_core.c
 	src/shared/packet.c
 )
 
 target_include_directories(sencd-client PRIVATE
+	src/debug
+	src/server/serverinit
 	src/client
 	src/shared
-	src/shared/protocol
-	src/debug
 )
 
 add_executable(sencd-server
 	main/server.c
 	src/debug/logs.c
 	src/server/server_core.c
+	src/server/serverinit/idle.c
+	src/commands/server_env.c
 	src/shared/packet.c
 )
 
 target_include_directories(sencd-server PRIVATE
-	src/server
-	src/shared
-	src/shared/protocol
 	src/debug
+	src/server
+	src/server/serverinit
+	src/commands
+	src/shared
 )

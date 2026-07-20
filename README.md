@@ -4,7 +4,7 @@
 
 ## Server Support
 
-All servers have different routing methods in terms of sending sencd's packetsto the internet. Below is a list of all available servers that sencd supports. Feel free to open a pull request if you can get other servers working with sencd
+All servers have different routing methods in terms of sending sencd's packets to the internet. Below is a list of all available servers that sencd supports. Feel free to open a pull request if you can get other servers working with sencd
 
 ---
 

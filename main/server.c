@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../src/server/server_core.h"
-#include "../src/shared/packet.h"
+#include "../src/commands/server_env.h"
 
 int main(int argc, char* argv[]) {
 	if (argc < 2) {
@@ -15,6 +14,7 @@ int main(int argc, char* argv[]) {
 				"-    start <argv='PORT NUMBER': default='8080'> [Start the Server on an optional port]\n"
 				"-    shutdown [Stop the Server, disconnecting all clients if needed]\n"
 				"- MANAGEMENT:\n"
+				"-    idle [Instead of the command output, display all server outputs. To exit, use C-x]\n"
 				"-    list [List all clients connected to the current server]\n"
 				"-    status [Get current diagnostics of the server]\n"
 				"-    kick <argv='client_id'> [Kick a client off the server]\n"
@@ -23,30 +23,10 @@ int main(int argc, char* argv[]) {
 				"-    limit <argv='n': default 'inf'> [Limit the server to process a maximum amount of 'n' packages per second]\n"
 				"-    setpwd [Set the administrator password, mainly used for remote control access on the client]\n"
 			  );
+	} else if (strcmp(argv[1], "start") == 0) {
+		start_server_environment();
 	} else {
-		// for server: create env so sub-commands work as normal commands and also change command prefix to smt like "sencd-server >"
-		SERVER_T server;
-		server_init(&server);
-		server_start(&server, SERVER_DEFAULT_PORT);
-
-		int client = server_accept(&server);
-		if (client >= 0)
-		{
-			PACKET packet;
-			packet_init(&packet);
-
-			if (packet_receive(client, &packet) == 0)
-			{
-				printf("Received type: %d\n", packet.header.type);
-				printf("Received size: %u\n", packet.header.payload_length);
-				printf("Payload message: %s\n", packet.payload);
-			}
-
-			packet_destroy(&packet);
-			close(client);
-		}
-
-		server_shutdown(&server);
+		printf("sencd-server: Invalid command, 'start' is the only command you can run while not in a server environment");
 	}
 
 	return 0;

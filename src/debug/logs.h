@@ -4,6 +4,12 @@
 #include <stdio.h>
 
 //--============
+// -- CONFIG
+//--============
+
+extern int force_logs;
+
+//--============
 // -- TYPEDEFS
 //--============
 

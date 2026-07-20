@@ -114,14 +114,17 @@ int server_accept(SERVER_T *server)
 
 	server->clients_connected++;
 
-	log_msg(INFO_MSG, SERVER_RT, "Client connected");
+	char buffer[256];
 
-	printf(
-			"Address: %s\n"
-			"Port: %u\n",
+	snprintf(
+			buffer,
+			sizeof(buffer),
+			"Client connected\nAddress: %s\nPort: %u",
 			client_ip,
 			ntohs(client_addr.sin_port)
-		  );
+			);
+
+	log_msg(INFO_MSG, SERVER_RT, buffer);
 
 	return client_socket;
 }

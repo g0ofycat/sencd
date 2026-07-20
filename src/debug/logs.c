@@ -1,10 +1,21 @@
 #include "logs.h"
 
+#include "../server/serverinit/idle.h"
+
+//--============
+// -- CONFIG
+//--============
+
+int force_logs = 0;
+
 //--============
 // -- LOGIC
 //--============
 
 void log_msg(MSG_T message_t, RUNTIME_T runtime_t, char* message) {
+	if (runtime_t == SERVER_RT && !is_idle() && !force_logs)
+		return;
+
 	const char *asterisk_color;
 	switch (message_t) {
 		case INFO_MSG:
@@ -39,4 +50,5 @@ void log_msg(MSG_T message_t, RUNTIME_T runtime_t, char* message) {
 	}
 
 	printf("[%s*%s] [%s]: %s\n", asterisk_color, RESET, runtime_label, message);
+	fflush(stdout);
 }
