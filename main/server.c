@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "../src/server/server_core.h"
+#include "../src/shared/packet.h"
 
 int main(int argc, char* argv[]) {
 	if (argc < 2) {
@@ -27,10 +28,26 @@ int main(int argc, char* argv[]) {
 		SERVER_T server;
 		server_init(&server);
 		server_start(&server, SERVER_DEFAULT_PORT);
+
 		int client = server_accept(&server);
 		if (client >= 0)
+		{
+			PACKET packet;
+			packet_init(&packet);
+
+			if (packet_receive(client, &packet) == 0)
+			{
+				printf("Received type: %d\n", packet.header.type);
+				printf("Received size: %u\n", packet.header.payload_length);
+				printf("Payload message: %s\n", packet.payload);
+			}
+
+			packet_destroy(&packet);
 			close(client);
+		}
+
 		server_shutdown(&server);
 	}
+
 	return 0;
 }

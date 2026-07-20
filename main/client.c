@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "../src/client/client_core.h"
+#include "../src/shared/packet.h"
 
 int main(int argc, char* argv[]) {
 	if (argc < 2) {
@@ -26,8 +27,30 @@ int main(int argc, char* argv[]) {
 	} else {
 		CONNECTION_T conn;
 		connection_init(&conn);
-		connection_connect(&conn, "127.0.0.1", CLIENT_DEFAULT_PORT);
+
+		if (connection_connect(
+					&conn,
+					"127.0.0.1",
+					CLIENT_DEFAULT_PORT) == 0)
+		{
+			PACKET_CONSTRUCTOR_T cons = {
+				.message = "hello serverbludden",
+				.header_type = PACKET_CLIENT_HELLO,
+				.header_version = 1
+			};
+
+			PACKET packet = packet_construct(cons);
+
+			packet_send(
+					conn.socket,
+					&packet
+					);
+
+			packet_destroy(&packet);
+		}
+
 		connection_disconnect(&conn);
 	}
+
 	return 0;
 }
