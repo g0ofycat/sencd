@@ -6,7 +6,18 @@
 // -- FORWARD DECL.
 //--============
 
+/// @brief send all data from buffer to socket
+/// @param socket
+/// @param *buffer
+/// @param length
+/// @return int: success bool
 static int send_all(int socket, const void *buffer, size_t length);
+
+/// @brief recv all data from socket to buffer
+/// @param socket
+/// @param *buffer
+/// @param length
+/// @return int: success bool
 static int recv_all(int socket, void *buffer, size_t length);
 
 //--============

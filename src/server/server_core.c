@@ -70,16 +70,7 @@ int server_start(SERVER_T *server, uint16_t port)
 
 	server->running = 1;
 
-	char buffer[64];
-
-	snprintf(
-			buffer,
-			sizeof(buffer),
-			"Listening on port %u",
-			server->port
-			);
-
-	log_msg(INFO_MSG, SERVER_RT, buffer);
+	log_msg(INFO_MSG, SERVER_RT, "Listening on port %u", server->port);
 
 	return 0;
 }
@@ -114,17 +105,7 @@ int server_accept(SERVER_T *server)
 
 	server->clients_connected++;
 
-	char buffer[256];
-
-	snprintf(
-			buffer,
-			sizeof(buffer),
-			"Client connected\nAddress: %s\nPort: %u",
-			client_ip,
-			ntohs(client_addr.sin_port)
-			);
-
-	log_msg(INFO_MSG, SERVER_RT, buffer);
+	log_msg(INFO_MSG, SERVER_RT, "Client connected\nAddress: %s\nPort: %u", client_ip, ntohs(client_addr.sin_port));
 
 	return client_socket;
 }
@@ -137,9 +118,7 @@ int server_shutdown(SERVER_T *server)
 	}
 
 	log_msg(INFO_MSG, SERVER_RT, "Shutting down server...");
-
 	server_cleanup(server);
-
 	log_msg(INFO_MSG, SERVER_RT, "Server shutdown complete");
 
 	return 0;
@@ -156,9 +135,7 @@ static int server_create_socket(SERVER_T *server)
 	if (server->socket < 0) {
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to create socket");
 		perror("socket");
-
 		server_cleanup(server);
-
 		return 1;
 	}
 
@@ -173,9 +150,7 @@ static int server_create_socket(SERVER_T *server)
 	{
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to set SO_REUSEADDR");
 		perror("setsockopt");
-
 		server_cleanup(server);
-
 		return 1;
 	}
 
@@ -197,9 +172,7 @@ static int server_bind(SERVER_T *server)
 	{
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to bind socket");
 		perror("bind");
-
 		server_cleanup(server);
-
 		return 1;
 	}
 
@@ -211,9 +184,7 @@ static int server_listen(SERVER_T *server)
 	if (listen(server->socket, SOMAXCONN) < 0) {
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to listen");
 		perror("listen");
-
 		server_cleanup(server);
-
 		return 1;
 	}
 

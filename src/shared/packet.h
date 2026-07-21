@@ -74,7 +74,7 @@ void packet_destroy(PACKET *packet);
 /// @return int: success bool
 int packet_send(int socket, PACKET *packet);
 
-/// @breif recv a packet from the given socket
+/// @brief recv a packet from the given socket
 /// @param socket
 /// @param *packet
 /// @return int: success bool

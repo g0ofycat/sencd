@@ -2,6 +2,8 @@
 #define LOGS_H
 
 #include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
 
 //--============
 // -- CONFIG
@@ -44,7 +46,8 @@ typedef enum {
 /// @brief debug func for all logs
 /// @param message_t: message type to display
 /// @param runtime_t: runtime exec env
-/// @param message: info to display
-void log_msg(MSG_T message_t, RUNTIME_T runtime_t, char* message);
+/// @param message: info to display, can be a formatted string
+/// @varadic: string data to format
+void log_msg(MSG_T message_t, RUNTIME_T runtime_t, char* message, ...);
 
 #endif

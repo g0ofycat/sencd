@@ -110,9 +110,7 @@ static int connection_create_socket(CONNECTION_T *connection) {
 	if (connection->socket < 0) {
 		log_msg(ERROR_MSG, CLIENT_RT, "Socket failed to create. Error:");
 		perror("socket");
-
 		connection_cleanup(connection);
-
 		return 1;
 	}
 
@@ -126,18 +124,14 @@ static int connection_open(CONNECTION_T *connection) {
 
 	if (inet_pton(AF_INET, connection->ip, &server.sin_addr) != 1) {
 		log_msg(ERROR_MSG, CLIENT_RT, "Couldn't resolve hostname");
-
 		connection_cleanup(connection);
-
 		return 1;
 	}
 
 	if (connect(connection->socket, (struct sockaddr *)&server, sizeof(server)) < 0) {
 		log_msg(ERROR_MSG, CLIENT_RT, "Connection issue. Error:");
 		perror("connect");
-
 		connection_cleanup(connection);
-
 		return 1;
 	}
 
