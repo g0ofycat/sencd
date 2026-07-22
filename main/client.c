@@ -4,6 +4,10 @@
 
 #include "../src/client/client_core.h"
 
+#include "../src/shared/packet.h"
+#include "../src/linker/session.h"
+#include "../src/debug/logs.h"
+
 int main(int argc, char* argv[]) {
 	if (argc < 2) {
 		printf("sencd-client: Client for connecting to servers to reroute internet traffic.\n- RELEASE: v.1.0.0\n- Add '--help' to this command see a list of all sub-commands\n");
@@ -31,7 +35,15 @@ int main(int argc, char* argv[]) {
 		uint16_t port = argc > 3 ? atoi(argv[3]) : CLIENT_DEFAULT_PORT;
 
 		connection_init(&conn);
-		connection_connect(&conn, ip, port);
+
+		if (connection_connect(&conn, ip, port) == 0) {
+			if (session_client_connect(&conn) == 0) {
+				force_logs = 1;
+				log_msg(SUCCESS_MSG, CLIENT_RT, "Handshake Completed");
+				force_logs = 0;
+			}
+		}
+
 		connection_disconnect(&conn);
 	} else {
 		printf("sencd-client: Invalid command, 'connect' and 'setinit' are the only commands you can run while not in a client environment");

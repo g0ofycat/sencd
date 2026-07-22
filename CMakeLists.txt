@@ -10,6 +10,8 @@ add_executable(sencd-client
 	src/server/serverinit/idle.c
 	src/client/client_core.c
 	src/shared/packet.c
+	src/linker/session.c
+	src/linker/session_manager.c
 )
 
 target_include_directories(sencd-client PRIVATE
@@ -17,6 +19,7 @@ target_include_directories(sencd-client PRIVATE
 	src/server/serverinit
 	src/client
 	src/shared
+	src/linker
 )
 
 add_executable(sencd-server
@@ -26,6 +29,8 @@ add_executable(sencd-server
 	src/server/serverinit/idle.c
 	src/commands/server_env.c
 	src/shared/packet.c
+	src/linker/session.c
+	src/linker/session_manager.c
 )
 
 target_include_directories(sencd-server PRIVATE
@@ -34,4 +39,5 @@ target_include_directories(sencd-server PRIVATE
 	src/server/serverinit
 	src/commands
 	src/shared
+	src/linker
 )

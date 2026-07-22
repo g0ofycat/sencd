@@ -8,6 +8,8 @@
 #include "../server/serverinit/idle.h"
 #include "../server/server_core.h"
 
+#include "../linker/session_manager.h"
+
 //--============
 // -- CONSTS
 //--============
@@ -30,6 +32,6 @@ typedef struct { // TODO: actual parsing
 //--============
 
 /// @brief start server term env and handle all commands
-void start_server_environment();
+void start_server_environment(void);
 
 #endif

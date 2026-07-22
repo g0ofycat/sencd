@@ -32,7 +32,7 @@ static void disable_raw_mode(struct termios* old)
 // -- LOGIC
 //--============
 
-void idle_mode()
+void idle_mode(void)
 {
 	struct termios old;
 	enable_raw_mode(&old);
@@ -53,6 +53,6 @@ void idle_mode()
 	printf("\e[1;1H\e[2J");
 }
 
-int is_idle() {
+int is_idle(void) {
 	return idle_f;
 }
