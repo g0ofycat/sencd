@@ -69,8 +69,6 @@ sencd-client attach
 
 I'm currently writing this in sencd's early stages of development. Implementing an "idle mode" similar to the server except on the client would be trivial. The way that idle mode and environment mode work is simply by running them in different threads and using a mutex for some basic race condition protection. Output sent from the server to the client usually consists of informational and error messages, which are generally more useful in the server console. Implementing an idle mode for the client would be counter-intuitive since you can't run any commands, therefore you won't see any output in the first place
 
----
-
 ## Dependencies
 
 This project uses **cJSON** for storing minimal data and configurations, **libsodium** for packet and data encryption, and **zstd** for data compression. Ensure you have everything installed before building the project. Alternatively, prebuilt executables can be found in the **Releases** section
