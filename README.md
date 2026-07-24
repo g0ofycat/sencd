@@ -73,4 +73,4 @@ I'm currently writing this in sencd's early stages of development. Implementing 
 
 ## Dependencies
 
-This project uses **cJSON** for storing minimal data and configurations, **libsodium** for packet and data encryption, and **zstd** for data compression. Ensure you have everything installed before building the project. Alternatively, prebuilt executables can be found in the **Releases** section.
+This project uses **cJSON** for storing minimal data and configurations, **libsodium** for packet and data encryption, and **zstd** for data compression. Ensure you have everything installed before building the project. Alternatively, prebuilt executables can be found in the **Releases** section
