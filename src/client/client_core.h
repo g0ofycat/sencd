@@ -4,8 +4,8 @@
 #include <arpa/inet.h>
 
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "../debug/logs.h"
 
@@ -70,13 +70,15 @@ int connection_disconnect(CONNECTION_T *connection);
 /// @param *buffer
 /// @param length
 /// @return ssize_t: send() output
-ssize_t connection_send(CONNECTION_T *connection, const void *buffer, size_t length);
+ssize_t connection_send(CONNECTION_T *connection, const void *buffer,
+						size_t length);
 
 /// @brief receive data from a connection
 /// @param *connection
 /// @param *buffer
 /// @param length
 /// @return ssize_t: recv() output
-ssize_t connection_receive(CONNECTION_T *connection, void *buffer, size_t length);
+ssize_t connection_receive(CONNECTION_T *connection, void *buffer,
+						   size_t length);
 
 #endif

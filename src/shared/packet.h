@@ -3,10 +3,10 @@
 
 #include <arpa/inet.h>
 
+#include <errno.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
-#include <errno.h>
 
 #include "../debug/logs.h"
 

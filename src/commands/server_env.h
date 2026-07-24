@@ -1,14 +1,16 @@
 #ifndef SERVER_ENV_H
 #define SERVER_ENV_H
 
+#include <pthread.h>
 #include <stdio.h>
 #include <string.h>
-#include <pthread.h>
 
-#include "../server/serverinit/idle.h"
+#include "utility/clear.h"
+
 #include "../server/server_core.h"
+#include "../server/serverinit/idle.h"
 
-#include "../linker/session_manager.h"
+#include "../sessions/session_manager.h"
 
 //--============
 // -- CONSTS
@@ -23,7 +25,7 @@
 typedef void (*SERVER_COMMAND_FUNC)();
 
 typedef struct { // TODO: actual parsing
-	const char* command;
+	const char *command;
 	SERVER_COMMAND_FUNC function;
 } SERVER_COMMAND;
 

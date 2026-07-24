@@ -16,8 +16,7 @@ static int connection_open(CONNECTION_T *connection);
 
 /// @brief cleanup on error
 /// @param *connection
-static void connection_cleanup(CONNECTION_T *connection)
-{
+static void connection_cleanup(CONNECTION_T *connection) {
 	if (connection->socket >= 0)
 		close(connection->socket);
 
@@ -35,9 +34,12 @@ void connection_init(CONNECTION_T *connection) {
 	connection->state = CONNECTION_DISCONNECTED;
 }
 
-int connection_connect(CONNECTION_T *connection, const char *ip, uint16_t port) {
-	if (connection->state == CONNECTION_CONNECTED) { // TODO: possibly change this to per port
-		log_msg(ERROR_MSG, CLIENT_RT, "Socket is already connected, aborting...");
+int connection_connect(CONNECTION_T *connection, const char *ip,
+					   uint16_t port) {
+	if (connection->state ==
+		CONNECTION_CONNECTED) { // TODO: possibly change this to per port
+		log_msg(ERROR_MSG, CLIENT_RT,
+				"Socket is already connected, aborting...");
 		return 1;
 	}
 
@@ -49,7 +51,8 @@ int connection_connect(CONNECTION_T *connection, const char *ip, uint16_t port) 
 	connection->state = CONNECTION_CONNECTING;
 
 	if (connection_create_socket(connection)) {
-		log_msg(ERROR_MSG, CLIENT_RT, "Socket hasn't been created yet, aborting...");
+		log_msg(ERROR_MSG, CLIENT_RT,
+				"Socket hasn't been created yet, aborting...");
 		return 1;
 	}
 	if (connection_open(connection)) {
@@ -62,8 +65,7 @@ int connection_connect(CONNECTION_T *connection, const char *ip, uint16_t port) 
 	return 0;
 };
 
-int connection_disconnect(CONNECTION_T *connection)
-{
+int connection_disconnect(CONNECTION_T *connection) {
 	if (connection->state == CONNECTION_DISCONNECTED) {
 		log_msg(ERROR_MSG, CLIENT_RT, "Socket is already disconnected");
 		return 1;
@@ -78,7 +80,8 @@ int connection_disconnect(CONNECTION_T *connection)
 	return 0;
 }
 
-ssize_t connection_send(CONNECTION_T *connection, const void *buffer, size_t length) {
+ssize_t connection_send(CONNECTION_T *connection, const void *buffer,
+						size_t length) {
 	ssize_t sent = send(connection->socket, buffer, length, 0);
 
 	if (sent > 0) {
@@ -89,7 +92,8 @@ ssize_t connection_send(CONNECTION_T *connection, const void *buffer, size_t len
 	return sent;
 }
 
-ssize_t connection_receive(CONNECTION_T *connection, void *buffer, size_t length) {
+ssize_t connection_receive(CONNECTION_T *connection, void *buffer,
+						   size_t length) {
 	ssize_t rec = recv(connection->socket, buffer, length, 0);
 
 	if (rec > 0) {
@@ -128,7 +132,8 @@ static int connection_open(CONNECTION_T *connection) {
 		return 1;
 	}
 
-	if (connect(connection->socket, (struct sockaddr *)&server, sizeof(server)) < 0) {
+	if (connect(connection->socket, (struct sockaddr *)&server,
+				sizeof(server)) < 0) {
 		log_msg(ERROR_MSG, CLIENT_RT, "Connection issue. Error:");
 		perror("connect");
 		connection_cleanup(connection);

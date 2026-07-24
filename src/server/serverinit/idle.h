@@ -5,6 +5,8 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include "../../commands/utility/clear.h"
+
 //--============
 // -- CONSTS
 //--============

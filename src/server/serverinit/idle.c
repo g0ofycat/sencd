@@ -12,8 +12,7 @@ static int idle_f = 0;
 
 /// @brief enable raw mode
 /// @param *old
-static void enable_raw_mode(struct termios* old)
-{
+static void enable_raw_mode(struct termios *old) {
 	struct termios raw;
 	tcgetattr(STDIN_FILENO, old);
 	raw = *old;
@@ -23,8 +22,7 @@ static void enable_raw_mode(struct termios* old)
 
 /// @brief disable raw mode
 /// @param *old
-static void disable_raw_mode(struct termios* old)
-{
+static void disable_raw_mode(struct termios *old) {
 	tcsetattr(STDIN_FILENO, TCSANOW, old);
 }
 
@@ -32,14 +30,13 @@ static void disable_raw_mode(struct termios* old)
 // -- LOGIC
 //--============
 
-void idle_mode(void)
-{
+void idle_mode(void) {
 	struct termios old;
 	enable_raw_mode(&old);
 
 	idle_f = 1;
 
-	printf("\e[1;1H\e[2J");
+	cmd_clear();
 	printf("C-x to exit\n\n");
 
 	while (1) {
@@ -50,9 +47,7 @@ void idle_mode(void)
 	idle_f = 0;
 
 	disable_raw_mode(&old);
-	printf("\e[1;1H\e[2J");
+	cmd_clear();
 }
 
-int is_idle(void) {
-	return idle_f;
-}
+int is_idle(void) { return idle_f; }

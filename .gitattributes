@@ -1,0 +1,31 @@
+* text=auto
+
+*.c text diff=cpp
+*.h text diff=cpp
+
+*.sh text eol=lf
+Makefile text
+*.mk text
+CMakeLists.txt text
+*.cmake text
+
+*.md text
+*.txt text
+*.json text
+
+*.a binary
+*.o binary
+*.so binary
+*.dll binary
+*.exe binary
+*.out binary
+*.png binary
+*.jpg binary
+
+*.zip binary
+*.tar.gz binary
+
+.gitignore export-ignore
+.gitattributes export-ignore
+/tests/ export-ignore
+

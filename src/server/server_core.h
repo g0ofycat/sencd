@@ -48,6 +48,6 @@ int server_accept(SERVER_T *server);
 /// @brief shutdown server and disconnect all clients
 /// @param *server
 /// @return int: success bool
-int server_shutdown(SERVER_T* server);
+int server_shutdown(SERVER_T *server);
 
 #endif
