@@ -10,7 +10,9 @@ void session_manager_init(SESSION_MANAGER_T *manager) {
 	pthread_mutex_init(&manager->lock, NULL);
 }
 
-SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager, SESSION_ROLE_T role, int socket, const char *ip) {
+SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager,
+								   SESSION_ROLE_T role, int socket,
+								   const char *ip) {
 	SESSION_T *session = malloc(sizeof(*session));
 
 	if (session == NULL)
@@ -36,11 +38,9 @@ SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager, SESSION_ROLE_T ro
 	return session;
 }
 
-int session_manager_disconnect(SESSION_MANAGER_T *manager, uint64_t session_id) {
-	return session_manager_remove(
-			manager,
-			session_id
-			);
+int session_manager_disconnect(SESSION_MANAGER_T *manager,
+							   uint64_t session_id) {
+	return session_manager_remove(manager, session_id);
 }
 
 void session_manager_destroy(SESSION_MANAGER_T *manager) {
@@ -100,7 +100,8 @@ int session_manager_remove(SESSION_MANAGER_T *manager, uint64_t session_id) {
 	return 1;
 }
 
-SESSION_T *session_manager_get(SESSION_MANAGER_T *manager, uint64_t session_id) {
+SESSION_T *session_manager_get(SESSION_MANAGER_T *manager,
+							   uint64_t session_id) {
 	pthread_mutex_lock(&manager->lock);
 
 	for (uint32_t i = 0; i < MAX_SESSIONS; i++) {

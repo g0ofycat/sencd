@@ -8,9 +8,7 @@ static uint64_t next_session_id = 0;
 
 /// @brief generate id
 /// @return uint64_t: incrementing int
-static uint64_t generate_session_id() {
-	return next_session_id++;
-}
+static uint64_t generate_session_id() { return next_session_id++; }
 
 //--============
 // -- LOGIC
@@ -23,7 +21,8 @@ void session_init(SESSION_T *session, SESSION_ROLE_T role) {
 	session->role = role;
 }
 
-int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket, const char *ip) {
+int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket,
+				   const char *ip) {
 	session_init(session, role);
 
 	session->socket = socket;
@@ -34,11 +33,7 @@ int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket, const ch
 
 	session->protocol_version = 1;
 
-	strncpy(
-			session->ip,
-			ip,
-			sizeof(session->ip) - 1
-		   );
+	strncpy(session->ip, ip, sizeof(session->ip) - 1);
 
 	session->state = SESSION_CONNECTING;
 
@@ -63,12 +58,9 @@ int session_server_connect(SESSION_T *session) {
 	packet_destroy(&packet);
 
 	PACKET hello = packet_construct(
-			(PACKET_CONSTRUCTOR_T){
-			.header_type = PACKET_SERVER_HELLO,
-			.header_version = session->protocol_version,
-			.message = ""
-			}
-			);
+		(PACKET_CONSTRUCTOR_T){.header_type = PACKET_SERVER_HELLO,
+							   .header_version = session->protocol_version,
+							   .message = ""});
 
 	if (packet_send(session->socket, &hello) != 0) {
 		packet_destroy(&hello);
@@ -79,23 +71,16 @@ int session_server_connect(SESSION_T *session) {
 
 	session->state = SESSION_WAIT_AUTH;
 
-	log_msg(
-			SUCCESS_MSG,
-			SERVER_RT,
-			"Handshake completed"
-		   );
+	log_msg(SUCCESS_MSG, SERVER_RT, "Handshake completed");
 
 	return 0;
 }
 
 int session_client_connect(CONNECTION_T *connection) {
 	PACKET hello = packet_construct(
-			(PACKET_CONSTRUCTOR_T){
-			.header_type = PACKET_CLIENT_HELLO,
-			.header_version = 1,
-			.message = ""
-			}
-			);
+		(PACKET_CONSTRUCTOR_T){.header_type = PACKET_CLIENT_HELLO,
+							   .header_version = 1,
+							   .message = ""});
 
 	packet_send(connection->socket, &hello);
 
@@ -104,7 +89,7 @@ int session_client_connect(CONNECTION_T *connection) {
 	PACKET response;
 	packet_init(&response);
 
-	if(packet_receive(connection->socket, &response) == 1) {
+	if (packet_receive(connection->socket, &response) == 1) {
 		packet_destroy(&response);
 		return 1;
 	}

@@ -1,14 +1,14 @@
 #ifndef CLIENT_ENV_H
 #define CLIENT_ENV_H
 
+#include <pthread.h>
 #include <stdio.h>
 #include <string.h>
-#include <pthread.h>
 
 #include "utility/clear.h"
 
-#include "../debug/logs.h"
 #include "../client/client_core.h"
+#include "../debug/logs.h"
 #include "../sessions/session.h"
 
 //--============
@@ -26,14 +26,14 @@
 typedef void (*CLIENT_COMMAND_FUNC)();
 
 typedef struct { // TODO: actual parsing
-	const char* command;
+	const char *command;
 	CLIENT_COMMAND_FUNC function;
 } CLIENT_COMMAND;
 
 typedef struct {
-	CONNECTION_T* conn;
+	CONNECTION_T *conn;
 	int argc;
-	char** argv;
+	char **argv;
 } CLIENT_THREAD_DATA;
 
 //--============
@@ -42,6 +42,6 @@ typedef struct {
 
 /// @brief start client term env and handle all commands
 /// @param *argv
-void start_client_environment(int argc, char* argv[]);
+void start_client_environment(int argc, char *argv[]);
 
 #endif

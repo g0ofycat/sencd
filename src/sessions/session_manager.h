@@ -2,9 +2,9 @@
 #define SESSION_MANAGER_H
 
 #include <pthread.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 #include "session.h"
 
@@ -37,7 +37,9 @@ void session_manager_init(SESSION_MANAGER_T *manager);
 /// @param socket
 /// @param *ip
 /// @return SESSION_T*: NULL on failure
-SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager, SESSION_ROLE_T role, int socket, const char *ip);
+SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager,
+								   SESSION_ROLE_T role, int socket,
+								   const char *ip);
 
 /// @brief disconnect and remove a session
 /// @param *manager

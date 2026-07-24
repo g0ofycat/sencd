@@ -3,14 +3,14 @@
 
 #include <arpa/inet.h>
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
-#include <unistd.h>
 #include <time.h>
+#include <unistd.h>
 
-#include "../shared/packet.h"
 #include "../client/client_core.h"
+#include "../shared/packet.h"
 
 //--============
 // -- TYPEDEFS
@@ -26,7 +26,8 @@ typedef enum {
 typedef enum {
 	SESSION_SERVER,
 	SESSION_CLIENT
-} SESSION_ROLE_T; // TODO: i may use this for the encryption, compression, handshake, wtv.
+} SESSION_ROLE_T; // TODO: i may use this for the encryption, compression,
+				  // handshake, wtv.
 
 typedef struct {
 	char ip[INET_ADDRSTRLEN];
@@ -58,7 +59,8 @@ void session_init(SESSION_T *session, SESSION_ROLE_T role);
 /// @param socket
 /// @param *ip
 /// @return int: success bool
-int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket, const char *ip);
+int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket,
+				   const char *ip);
 
 /// @brief handle the initial connection handshake [server]
 /// @param *session
