@@ -33,7 +33,7 @@ int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket,
 	session->created = time(NULL);
 	session->last_seen = session->created;
 
-	session->protocol_version = 1;
+	session->protocol_version = CURRENT_PROTOCOL_VERSION;
 
 	strncpy(session->ip, ip, sizeof(session->ip) - 1);
 
@@ -48,7 +48,6 @@ void session_destroy(SESSION_T *session) {
 	}
 
 	memset(session, 0, sizeof(*session));
-
 	session->socket = -1;
 	session->state = SESSION_DISCONNECTED;
 }
@@ -105,6 +104,11 @@ int session_server_connect(SESSION_T *session) {
 		return 1;
 	}
 
+	if (packet.header.version != CURRENT_PROTOCOL_VERSION) {
+		packet_destroy(&packet);
+		return 1;
+	}
+
 	packet_destroy(&packet);
 
 	PACKET hello = packet_construct(
@@ -153,10 +157,6 @@ int session_authenticate_client(SESSION_T *session) {
 			challenge.public_key,
 			CRYPTO_PUBLIC_KEY_SIZE);
 
-	if (crypto_generate_identity(&session->crypto) != 0) {
-		return 1;
-	}
-
 	AUTH_RESPONSE_T response;
 	memset(&response, 0, sizeof(response));
 
@@ -190,21 +190,36 @@ int session_authenticate_client(SESSION_T *session) {
 
 	packet_destroy(&reply);
 
+	session->state = SESSION_WAIT_AUTH;
+
 	return 0;
 }
 
 int session_client_connect(CONNECTION_T *connection) {
 	PACKET hello = packet_construct((PACKET_CONSTRUCTOR_T){
-			.header_type = PACKET_CLIENT_HELLO, .header_version = 1});
+			.header_type = PACKET_CLIENT_HELLO, .header_version = CURRENT_PROTOCOL_VERSION});
 
-	packet_send(connection->socket, &hello);
+	if (packet_send(connection->socket, &hello) != 0) {
+		packet_destroy(&hello);
+		return 1;
+	}
 
 	packet_destroy(&hello);
 
 	PACKET response;
 	packet_init(&response);
 
-	if (packet_receive(connection->socket, &response) == 1) {
+	if (packet_receive(connection->socket, &response) != 0) {
+		packet_destroy(&response);
+		return 1;
+	}
+
+	if (response.header.type != PACKET_SERVER_HELLO) {
+		packet_destroy(&response);
+		return 1;
+	}
+
+	if (response.header.version != CURRENT_PROTOCOL_VERSION) {
 		packet_destroy(&response);
 		return 1;
 	}
