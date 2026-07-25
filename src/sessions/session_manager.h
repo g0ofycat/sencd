@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/*
+ *	src/sessions/session_manager.h: Manage all sessions along with their data
+ *
+ *	Copyright (C) 2026 Clinton Ung-davy
+ */
+
 #ifndef SESSION_MANAGER_H
 #define SESSION_MANAGER_H
 

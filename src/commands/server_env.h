@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/*
+ *	src/commands/server_env.h: Console environment for the server
+ *
+ *	Copyright (C) 2026 Clinton Ung-davy
+ */
+
 #ifndef SERVER_ENV_H
 #define SERVER_ENV_H
 
@@ -28,6 +35,11 @@ typedef struct { // TODO: actual parsing
 	const char *command;
 	SERVER_COMMAND_FUNC function;
 } SERVER_COMMAND;
+
+typedef struct {
+	SERVER_T *server;
+	SESSION_MANAGER_T *session_manager;
+} SERVER_LISTENER_DATA;
 
 //--============
 // -- DEFINITIONS

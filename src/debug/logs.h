@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/*
+ *	src/debug/logs.h: Log all system messages
+ *
+ *	Copyright (C) 2026 Clinton Ung-davy
+ */
+
 #ifndef LOGS_H
 #define LOGS_H
 

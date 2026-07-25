@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/*
+ *	src/shared/packet.h: Packet protocol for everything
+ *
+ *	Copyright (C) 2026 Clinton Ung-davy
+ */
+
 #ifndef PACKET_H
 #define PACKET_H
 
@@ -14,19 +21,29 @@
 // -- CONSTS
 //--============
 
+#define CURRENT_PROTOCOL_VERSION 1
+
 #define MAX_PACKET_SIZE 0x1000000
+
+#define PACKET_FLAG_NONE 0x0
+#define PACKET_FLAG_ENCRYPTED 0x1
+#define PACKET_FLAG_COMPRESSED 0x2
 
 //--============
 // -- TYPEDEFS
 //--============
 
 typedef enum {
-	PACKET_SERVER_HELLO,
 	PACKET_CLIENT_HELLO,
+	PACKET_SERVER_HELLO,
 
 	PACKET_AUTH_REQUEST,
+	PACKET_AUTH_RESPONSE,
 	PACKET_AUTH_SUCCESS,
 	PACKET_AUTH_FAIL,
+
+	PACKET_KEY_EXCHANGE,
+	PACKET_KEY_CONFIRM,
 
 	PACKET_PING,
 	PACKET_PONG,
@@ -51,9 +68,12 @@ typedef struct {
 } PACKET;
 
 typedef struct {
-	char message[64];
 	PACKET_HEADER_T header_type;
 	uint8_t header_version;
+	uint16_t flags;
+
+	uint32_t payload_length;
+	uint8_t *payload;
 } PACKET_CONSTRUCTOR_T;
 
 //--============

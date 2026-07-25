@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/*
+ *	src/commands/client_env.h: Console environment for the client
+ *
+ *	Copyright (C) 2026 Clinton Ung-davy
+ */
+
 #ifndef CLIENT_ENV_H
 #define CLIENT_ENV_H
 
@@ -32,8 +39,11 @@ typedef struct { // TODO: actual parsing
 
 typedef struct {
 	CONNECTION_T *conn;
-	int argc;
 	char **argv;
+	const char *ip;
+	int argc;
+	int connection_status;
+	uint16_t port;
 } CLIENT_THREAD_DATA;
 
 //--============

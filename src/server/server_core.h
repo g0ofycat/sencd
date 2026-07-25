@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/*
+ *	src/server/server_core.h: Main functions for initializing the server
+ *
+ *	Copyright (C) 2026 Clinton Ung-davy
+ */
+
 #ifndef CORE_SERVER_H
 #define CORE_SERVER_H
 

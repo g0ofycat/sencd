@@ -4,6 +4,10 @@ project(sencd LANGUAGES C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(SODIUM REQUIRED libsodium)
+
 add_executable(sencd-client
 	main/client.c
 	src/debug/logs.c
@@ -12,9 +16,9 @@ add_executable(sencd-client
 	src/commands/utility/clear.c
 	src/client/client_core.c
 	src/shared/packet.c
+	src/shared/security/crypto.c
 	src/sessions/session.c
 	src/sessions/session_manager.c
-	src/sessions/utility/authentication.c
 )
 
 target_include_directories(sencd-client PRIVATE
@@ -26,8 +30,11 @@ target_include_directories(sencd-client PRIVATE
 	src/shared
 	src/shared/security
 	src/sessions
-	src/sessions/utility
+	${SODIUM_INCLUDE_DIRS}
 )
+
+target_link_directories(sencd-client PRIVATE ${SODIUM_LIBRARY_DIRS})
+target_link_libraries(sencd-client PRIVATE ${SODIUM_LIBRARIES})
 
 add_executable(sencd-server
 	main/server.c
@@ -37,10 +44,9 @@ add_executable(sencd-server
 	src/commands/server_env.c
 	src/commands/utility/clear.c
 	src/shared/packet.c
-	src/shared/security/encryption.c
+	src/shared/security/crypto.c
 	src/sessions/session.c
 	src/sessions/session_manager.c
-	src/sessions/utility/authentication.c
 )
 
 target_include_directories(sencd-server PRIVATE
@@ -52,5 +58,8 @@ target_include_directories(sencd-server PRIVATE
 	src/shared
 	src/shared/security
 	src/sessions
-	src/sessions/utility
+	${SODIUM_INCLUDE_DIRS}
 )
+
+target_link_directories(sencd-server PRIVATE ${SODIUM_LIBRARY_DIRS})
+target_link_libraries(sencd-server PRIVATE ${SODIUM_LIBRARIES})

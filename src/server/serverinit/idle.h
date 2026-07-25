@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/*
+ *	src/server/serverinit/idle.h: Read-only mode for terminal
+ *
+ *	Copyright (C) 2026 Clinton Ung-davy
+ */
+
 #ifndef IDLE_H
 #define IDLE_H
 

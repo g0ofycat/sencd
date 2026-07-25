@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/*
+ *	src/client/client_core.h: Main functions for client connection
+ *
+ *	Copyright (C) 2026 Clinton Ung-davy
+ */
+
 #ifndef CORE_CLIENT_H
 #define CORE_CLIENT_H
 

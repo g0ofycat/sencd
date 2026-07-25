@@ -30,15 +30,21 @@ static void execute_command(char *input) {
 /// @brief thread for listening to clients
 /// @param *arg
 static void *server_listener(void *arg) {
-	SERVER_T *server = (SERVER_T *)arg;
-	SESSION_MANAGER_T session_manager;
+	SERVER_LISTENER_DATA *listener = arg;
 
-	while (server->running) {
-		int client = server_accept(server);
-		if (client >= 0) {
-			if (session_manager_connect(&session_manager, SESSION_SERVER,
-										client, "127.0.0.1") == NULL)
-				close(client);
+	while (listener->server->running) {
+		int client = server_accept(listener->server);
+
+		if (client < 0)
+			continue;
+
+		if (session_manager_connect(
+					listener->session_manager,
+					SESSION_SERVER,
+					client,
+					"127.0.0.1") == NULL) {
+
+			close(client);
 		}
 	}
 
@@ -51,16 +57,31 @@ static void *server_listener(void *arg) {
 
 void start_server_environment(void) {
 	SERVER_T server;
-
 	server_init(&server);
 
 	force_logs = 1;
-	server_start(&server, SERVER_DEFAULT_PORT);
+	if (server_start(&server, SERVER_DEFAULT_PORT) != 0) {
+		force_logs = 0;
+		return;
+	}
 	force_logs = 0;
 
-	pthread_t listener;
+	SESSION_MANAGER_T session_manager;
+	session_manager_init(&session_manager);
 
-	pthread_create(&listener, NULL, server_listener, &server);
+	SERVER_LISTENER_DATA listener_data = {
+		.server = &server,
+		.session_manager = &session_manager
+	};
+
+	pthread_t listener_thread;
+
+	pthread_create(
+			&listener_thread,
+			NULL,
+			server_listener,
+			&listener_data
+			);
 
 	char input[256];
 
@@ -76,5 +97,6 @@ void start_server_environment(void) {
 	}
 
 	server_shutdown(&server);
-	pthread_join(listener, NULL);
+	pthread_join(listener_thread, NULL);
+	session_manager_destroy(&session_manager);
 }

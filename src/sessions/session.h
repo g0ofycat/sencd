@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/*
+ *	src/sessions/session.h: Logic for client->server connection pipeline
+ *
+ *	Copyright (C) 2026 Clinton Ung-davy
+ */
+
 #ifndef SESSION_H
 #define SESSION_H
 
@@ -12,6 +19,15 @@
 #include "../client/client_core.h"
 #include "../shared/packet.h"
 
+#include "../shared/auth.h"
+#include "../shared/security/crypto.h"
+
+//--============
+// -- CONSTS
+//--============
+
+#define KEY_SIZE 32
+
 //--============
 // -- TYPEDEFS
 //--============
@@ -19,7 +35,7 @@
 typedef enum {
 	SESSION_CONNECTING,
 	SESSION_WAIT_AUTH,
-	SESSION_AUTHENTICATED,
+	SESSION_ESTABLISHED,
 	SESSION_DISCONNECTED
 } SESSION_STATE_T;
 
@@ -30,6 +46,9 @@ typedef enum {
 				  // handshake, wtv.
 
 typedef struct {
+	CRYPTO_CONTEXT_T crypto;
+	uint8_t auth_nonce[AUTH_NONCE_SIZE];
+
 	char ip[INET_ADDRSTRLEN];
 	uint64_t session_id;
 
@@ -62,23 +81,28 @@ void session_init(SESSION_T *session, SESSION_ROLE_T role);
 int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket,
 				   const char *ip);
 
+/// @brief destroy a session
+/// @param *session
+void session_destroy(SESSION_T *session);
+
+/// @brief auth the server
+/// @param *session
+/// @return int: success bool
+int session_authenticate_server(SESSION_T *session);
+
 /// @brief handle the initial connection handshake [server]
 /// @param *session
 /// @return int: success bool
 int session_server_connect(SESSION_T *session);
 
+/// @brief auth the client
+/// @param *session
+/// @return int: success bool
+int session_authenticate_client(SESSION_T *session);
+
 /// @brief handle the initial connection handshake [client]
 /// @param *connection
 /// @return int: success bool
 int session_client_connect(CONNECTION_T *connection);
-
-/// @brief authenticate the session
-/// @param *session
-/// @return int: success bool
-int session_authenticate(SESSION_T *session);
-
-/// @brief destroy a session
-/// @param *session
-void session_destroy(SESSION_T *session);
 
 #endif

@@ -1,5 +1,3 @@
-// TODO: convert packet headers to network and from network byte order
-
 #include "packet.h"
 
 //--============
@@ -32,9 +30,13 @@ void packet_destroy(PACKET *packet) {
 }
 
 int packet_send(int socket, PACKET *packet) {
-	PACKET_HEADER header = packet->header;
+	PACKET_HEADER header = {.payload_length =
+								htonl(packet->header.payload_length),
+							.flags = htons(packet->header.flags),
+							.version = packet->header.version,
+							.type = packet->header.type};
 
-	if (header.payload_length > MAX_PACKET_SIZE) {
+	if (packet->header.payload_length > MAX_PACKET_SIZE) {
 		log_msg(ERROR_MSG, OTHER_RT,
 				"Packet exceeds maximum size, aborting...");
 		return 1;
@@ -45,8 +47,9 @@ int packet_send(int socket, PACKET *packet) {
 		return 1;
 	}
 
-	if (header.payload_length > 0) {
-		if (send_all(socket, packet->payload, header.payload_length) < 0) {
+	if (packet->header.payload_length > 0) {
+		if (send_all(socket, packet->payload, packet->header.payload_length) <
+			0) {
 			log_msg(ERROR_MSG, OTHER_RT,
 					"Failed to send packet payload, aborting...");
 			return 1;
@@ -66,23 +69,39 @@ int packet_receive(int socket, PACKET *packet) {
 		return 1;
 	}
 
-	packet->header = header;
+	packet->header.payload_length = ntohl(header.payload_length);
+	packet->header.flags = ntohs(header.flags);
+	packet->header.version = header.version;
+	packet->header.type = header.type;
 
-	if (header.payload_length > MAX_PACKET_SIZE) {
+	if (packet->header.version != CURRENT_PROTOCOL_VERSION) {
+		log_msg(ERROR_MSG, OTHER_RT, "Unsupported protocol version");
+		packet_destroy(packet);
+		return 1;
+	}
+
+	if (packet->header.type > PACKET_ERROR) {
+		log_msg(ERROR_MSG, OTHER_RT, "Invalid packet type");
+		packet_destroy(packet);
+		return 1;
+	}
+
+	if (packet->header.payload_length > MAX_PACKET_SIZE) {
 		log_msg(ERROR_MSG, OTHER_RT,
 				"Packet exceeds maximum size, aborting...");
 		return 1;
 	}
 
-	if (header.payload_length > 0) {
-		packet->payload = malloc(header.payload_length);
+	if (packet->header.payload_length > 0) {
+		packet->payload = malloc(packet->header.payload_length);
 
 		if (packet->payload == NULL) {
 			log_msg(ERROR_MSG, OTHER_RT, "Payload is NULL");
 			return 1;
 		}
 
-		if (recv_all(socket, packet->payload, header.payload_length) < 0) {
+		if (recv_all(socket, packet->payload, packet->header.payload_length) <
+			0) {
 			log_msg(ERROR_MSG, OTHER_RT,
 					"Failed to receive packet payload, aborting...");
 			packet_destroy(packet);
@@ -93,24 +112,27 @@ int packet_receive(int socket, PACKET *packet) {
 	return 0;
 }
 
-PACKET packet_construct(PACKET_CONSTRUCTOR_T interface) {
+PACKET packet_construct(PACKET_CONSTRUCTOR_T data) {
 	PACKET packet;
 
 	packet_init(&packet);
 
-	packet.header.type = interface.header_type;
-	packet.header.version = interface.header_version;
+	packet.header.type = data.header_type;
+	packet.header.version = data.header_version;
+	packet.header.flags = data.flags;
+	packet.header.payload_length = data.payload_length;
 
-	packet.header.payload_length = strlen(interface.message);
-	packet.payload = malloc(packet.header.payload_length);
+	if (data.payload_length > 0) {
+		packet.payload = malloc(data.payload_length);
 
-	if (packet.payload == NULL) {
-		log_msg(WARN_MSG, OTHER_RT, "Failed to allocate packet, returning...");
-		packet.header.payload_length = 0;
-		return packet;
+		if (packet.payload == NULL) {
+			log_msg(WARN_MSG, OTHER_RT, "Failed to allocate packet payload");
+			packet.header.payload_length = 0;
+			return packet;
+		}
+
+		memcpy(packet.payload, data.payload, data.payload_length);
 	}
-
-	memcpy(packet.payload, interface.message, packet.header.payload_length);
 
 	return packet;
 }

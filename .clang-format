@@ -6,4 +6,3 @@ BreakBeforeBraces: Attach
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: All
-ColumnLimit: 80
