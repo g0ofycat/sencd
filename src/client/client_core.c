@@ -37,7 +37,7 @@ void connection_init(CONNECTION_T *connection) {
 int connection_connect(CONNECTION_T *connection, const char *ip,
 					   uint16_t port) {
 	if (connection->state ==
-		CONNECTION_CONNECTED) { // TODO: possibly change this to per port
+		CONNECTION_CONNECTED) {
 		log_msg(ERROR_MSG, CLIENT_RT,
 				"Socket is already connected, aborting...");
 		return 1;

@@ -42,8 +42,7 @@ typedef enum {
 typedef enum {
 	SESSION_SERVER,
 	SESSION_CLIENT
-} SESSION_ROLE_T; // TODO: i may use this for the encryption, compression,
-				  // handshake, wtv.
+} SESSION_ROLE_T;
 
 typedef struct {
 	CRYPTO_CONTEXT_T crypto;

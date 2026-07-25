@@ -42,7 +42,7 @@ static void *server_listener(void *arg) {
 					listener->session_manager,
 					SESSION_SERVER,
 					client,
-					"127.0.0.1") == NULL) {
+					listener->ip) == NULL) {
 
 			close(client);
 		}
@@ -55,12 +55,17 @@ static void *server_listener(void *arg) {
 // -- LOGIC
 //--============
 
-void start_server_environment(void) {
+void start_server_environment(int argc, char *argv[]) {
 	SERVER_T server;
 	server_init(&server);
 
+	uint16_t port = SERVER_DEFAULT_PORT;
+
+	if (argc > 3)
+		port = (uint16_t)atoi(argv[3]);
+
 	force_logs = 1;
-	if (server_start(&server, SERVER_DEFAULT_PORT) != 0) {
+	if (server_start(&server, port) != 0) {
 		force_logs = 0;
 		return;
 	}
@@ -71,8 +76,12 @@ void start_server_environment(void) {
 
 	SERVER_LISTENER_DATA listener_data = {
 		.server = &server,
-		.session_manager = &session_manager
+		.session_manager = &session_manager,
+		.ip = SERVER_DEFAULT_IP
 	};
+
+	if (argc > 2)
+		listener_data.ip = argv[2];
 
 	pthread_t listener_thread;
 

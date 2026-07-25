@@ -25,13 +25,15 @@
 
 #define SHELL_PREFIX "sencd-server > "
 
+#define SERVER_DEFAULT_IP "127.0.0.1"
+
 //--============
 // -- TYPEDEFS
 //--============
 
 typedef void (*SERVER_COMMAND_FUNC)();
 
-typedef struct { // TODO: actual parsing
+typedef struct {
 	const char *command;
 	SERVER_COMMAND_FUNC function;
 } SERVER_COMMAND;
@@ -39,6 +41,7 @@ typedef struct { // TODO: actual parsing
 typedef struct {
 	SERVER_T *server;
 	SESSION_MANAGER_T *session_manager;
+	const char *ip;
 } SERVER_LISTENER_DATA;
 
 //--============
@@ -46,6 +49,7 @@ typedef struct {
 //--============
 
 /// @brief start server term env and handle all commands
-void start_server_environment(void);
+/// @param *ip
+void start_server_environment(int argc, char *argv[]);
 
 #endif

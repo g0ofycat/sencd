@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 				"usage: sencd-server <options> <argv>?\n\n"
 				"options:\n"
 				"- CORE:\n"
-				"-    start <argv='PORT NUMBER': default='8080'> [Start the Server on an optional port]\n"
+				"-    start <argv='SERVER IP': default='127.0.0.1'> <argv='PORT NUMBER': default='8080'> [Start the Server on an optional port]\n"
 				"-    shutdown [Stop the Server, disconnecting all clients if needed]\n"
 				"- MANAGEMENT [ENVIRONMENT ONLY]:\n"
 				"-    idle [Instead of the command output, display all server outputs. To exit, use C-x]\n"
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 				"-    setpwd [Set the administrator password, mainly used for remote control access on the client]\n");
 	} else if (strcmp(argv[1], "start") == 0) {
 		crypto_init();
-		start_server_environment();
+		start_server_environment(argc, argv);
 	} else {
 		printf("sencd-server: Invalid command, 'start' is the only command you can run while not in a server environment");
 	}

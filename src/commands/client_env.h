@@ -32,7 +32,7 @@
 
 typedef void (*CLIENT_COMMAND_FUNC)();
 
-typedef struct { // TODO: actual parsing
+typedef struct {
 	const char *command;
 	CLIENT_COMMAND_FUNC function;
 } CLIENT_COMMAND;
