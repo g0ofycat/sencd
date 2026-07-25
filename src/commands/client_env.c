@@ -78,8 +78,8 @@ void start_client_environment(int argc, char *argv[]) {
 	pthread_join(listener, NULL);
 
 	if (data.connection_status != 0) {
-		log_msg(ERROR_MSG, CLIENT_RT, "Exiting due to connection failure.\n");
 		connection_disconnect(&conn);
+		log_msg(ERROR_MSG, CLIENT_RT, "Exiting due to connection failure");
 		return;
 	}
 
