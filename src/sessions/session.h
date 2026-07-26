@@ -100,8 +100,8 @@ int session_server_connect(SESSION_T *session);
 int session_authenticate_client(SESSION_T *session);
 
 /// @brief handle the initial connection handshake [client]
-/// @param *connection
+/// @param *session
 /// @return int: success bool
-int session_client_connect(CONNECTION_T *connection);
+int session_client_connect(SESSION_T *session);
 
 #endif

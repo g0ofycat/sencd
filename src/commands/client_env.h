@@ -39,7 +39,12 @@ typedef struct {
 } CLIENT_COMMAND;
 
 typedef struct {
-	CONNECTION_T *conn;
+	CONNECTION_T connection;
+	SESSION_T session;
+} CLIENT_T;
+
+typedef struct {
+	CLIENT_T *client;
 	char **argv;
 	const char *ip;
 	int argc;

@@ -32,8 +32,14 @@ static void execute_command(char *input) {
 static void *client_listener(void *arg) {
 	CLIENT_THREAD_DATA *data = (CLIENT_THREAD_DATA *)arg;
 
-	if (connection_connect(data->conn, data->ip, data->port) == 0) {
-		if (session_client_connect(data->conn) != 0) {
+	if (connection_connect(&data->client->connection, data->ip, data->port) == 0) {
+		session_create(
+				&data->client->session,
+				SESSION_CLIENT,
+				data->client->connection.socket,
+				data->ip);
+
+		if (session_client_connect(&data->client->session) != 0) {
 			log_msg(ERROR_MSG, CLIENT_RT, "Handshake Failed");
 			data->connection_status = 1;
 			return NULL;
@@ -52,14 +58,15 @@ static void *client_listener(void *arg) {
 //--============
 
 void start_client_environment(int argc, char *argv[]) {
-	CONNECTION_T conn;
+	CLIENT_T client;
 
-	connection_init(&conn);
+	connection_init(&client.connection);
+	session_init(&client.session, SESSION_CLIENT);
 
 	pthread_t listener;
 
 	CLIENT_THREAD_DATA data = {
-		.conn = &conn,
+		.client = &client,
 		.argv = argv,
 		.ip = CLIENT_DEFAULT_IP,
 		.argc = argc,
@@ -74,14 +81,7 @@ void start_client_environment(int argc, char *argv[]) {
 		data.port = (uint16_t)atoi(argv[3]);
 
 	pthread_create(&listener, NULL, client_listener, &data);
-
 	pthread_join(listener, NULL);
-
-	if (data.connection_status != 0) {
-		connection_disconnect(&conn);
-		log_msg(ERROR_MSG, CLIENT_RT, "Exiting due to connection failure");
-		return;
-	}
 
 	char input[256];
 
@@ -96,5 +96,5 @@ void start_client_environment(int argc, char *argv[]) {
 		execute_command(input);
 	}
 
-	connection_disconnect(&conn);
+	connection_disconnect(&client.connection);
 }

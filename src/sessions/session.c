@@ -126,7 +126,7 @@ int session_server_connect(SESSION_T *session) {
 
 	log_msg(SUCCESS_MSG, SERVER_RT, "Handshake completed");
 
-	return 0;
+	return session_authenticate_server(session);
 }
 
 int session_authenticate_client(SESSION_T *session) {
@@ -195,11 +195,11 @@ int session_authenticate_client(SESSION_T *session) {
 	return 0;
 }
 
-int session_client_connect(CONNECTION_T *connection) {
+int session_client_connect(SESSION_T *session) {
 	PACKET hello = packet_construct((PACKET_CONSTRUCTOR_T){
 			.header_type = PACKET_CLIENT_HELLO, .header_version = CURRENT_PROTOCOL_VERSION});
 
-	if (packet_send(connection->socket, &hello) != 0) {
+	if (packet_send(session->socket, &hello) != 0) {
 		packet_destroy(&hello);
 		return 1;
 	}
@@ -209,7 +209,7 @@ int session_client_connect(CONNECTION_T *connection) {
 	PACKET response;
 	packet_init(&response);
 
-	if (packet_receive(connection->socket, &response) != 0) {
+	if (packet_receive(session->socket, &response) != 0) {
 		packet_destroy(&response);
 		return 1;
 	}
@@ -226,6 +226,6 @@ int session_client_connect(CONNECTION_T *connection) {
 
 	packet_destroy(&response);
 
-	return 0;
+	return session_authenticate_client(session);
 }
 
