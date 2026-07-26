@@ -15,6 +15,7 @@
 //--============
 
 /// @brief clear console
-void cmd_clear();
+/// @param **argv: unused
+void cmd_clear(char **argv);
 
 #endif

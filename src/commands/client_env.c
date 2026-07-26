@@ -4,7 +4,7 @@
 // -- CONFIG
 //--============
 
-static CLIENT_COMMAND commands[] = {{"clear", cmd_clear}};
+static CLIENT_COMMAND commands[] = {{"clear", NULL, cmd_clear}};
 
 //--============
 // -- PRIVATE

@@ -30,13 +30,13 @@ static void disable_raw_mode(struct termios *old) {
 // -- LOGIC
 //--============
 
-void idle_mode(void) {
+void idle_mode(char **argv) {
 	struct termios old;
 	enable_raw_mode(&old);
 
 	idle_f = 1;
 
-	cmd_clear();
+	cmd_clear(argv);
 	printf("C-x to exit\n\n");
 
 	while (1) {
@@ -47,7 +47,7 @@ void idle_mode(void) {
 	idle_f = 0;
 
 	disable_raw_mode(&old);
-	cmd_clear();
+	cmd_clear(argv);
 }
 
 int is_idle(void) { return idle_f; }

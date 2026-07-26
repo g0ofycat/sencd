@@ -34,6 +34,7 @@ typedef void (*CLIENT_COMMAND_FUNC)();
 
 typedef struct {
 	const char *command;
+	char **argv;
 	CLIENT_COMMAND_FUNC function;
 } CLIENT_COMMAND;
 

@@ -31,10 +31,11 @@
 // -- TYPEDEFS
 //--============
 
-typedef void (*SERVER_COMMAND_FUNC)();
+typedef void (*SERVER_COMMAND_FUNC)(char **arg);
 
 typedef struct {
 	const char *command;
+	char **argv;
 	SERVER_COMMAND_FUNC function;
 } SERVER_COMMAND;
 

@@ -25,7 +25,8 @@
 //--============
 
 /// @brief allow for log_msg to pass through and makes term output only
-void idle_mode(void);
+/// @param **argv: unused
+void idle_mode(char **argv);
 
 /// @brief check if the term is currently idle
 /// @return int: bool

@@ -4,7 +4,7 @@
 // -- CONFIG
 //--============
 
-static SERVER_COMMAND commands[] = {{"idle", idle_mode}, {"clear", cmd_clear}};
+static SERVER_COMMAND commands[] = {{"idle", NULL, idle_mode}, {"clear", NULL, cmd_clear}};
 
 //--============
 // -- PRIVATE
@@ -17,7 +17,7 @@ static const int command_count = sizeof(commands) / sizeof(commands[0]);
 static void execute_command(char *input) {
 	for (int i = 0; i < command_count; i++) {
 		if (strcmp(input, commands[i].command) == 0) {
-			commands[i].function();
+			commands[i].function(commands[i].argv);
 			return;
 		}
 	}
