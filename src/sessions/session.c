@@ -126,7 +126,33 @@ int session_server_connect(SESSION_T *session) {
 
 	log_msg(SUCCESS_MSG, SERVER_RT, "Handshake completed");
 
-	return session_authenticate_server(session);
+	if (session_authenticate_server(session) != 0) {
+		log_msg(ERROR_MSG, SERVER_RT, "Couldn't authenticate the server");
+		return 1;
+	}
+
+	if (session_verify_client(session) != 0) {
+		log_msg(ERROR_MSG, SERVER_RT, "Couldn't verify the current session");
+		return 1;
+	}
+
+	PACKET success = packet_construct(
+			(PACKET_CONSTRUCTOR_T){
+			.header_type = PACKET_AUTH_SUCCESS,
+			.header_version = session->protocol_version
+			}
+			);
+
+	if (packet_send(session->socket, &success) != 0) {
+		packet_destroy(&success);
+		return 1;
+	}
+
+	packet_destroy(&success);
+
+	session->state = SESSION_AUTHENTICATED;
+
+	return 0;
 }
 
 int session_authenticate_client(SESSION_T *session) {
@@ -160,9 +186,19 @@ int session_authenticate_client(SESSION_T *session) {
 	AUTH_RESPONSE_T response;
 	memset(&response, 0, sizeof(response));
 
-	memcpy(response.public_key,
+	memcpy(
+			response.public_key,
 			session->crypto.public_key,
-			CRYPTO_PUBLIC_KEY_SIZE);
+			CRYPTO_PUBLIC_KEY_SIZE
+		  );
+
+	if (memcmp(
+				challenge.public_key,
+				TRUSTED_SERVER_KEY,
+				CRYPTO_PUBLIC_KEY_SIZE
+			  ) != 0) {
+		return 1;
+	}
 
 	if (crypto_sign_message(
 				&session->crypto,
@@ -191,6 +227,23 @@ int session_authenticate_client(SESSION_T *session) {
 	packet_destroy(&reply);
 
 	session->state = SESSION_WAIT_AUTH;
+
+	PACKET result;
+	packet_init(&result);
+
+	if(packet_receive(session->socket, &result) != 0) {
+		packet_destroy(&result);
+		return 1;
+	}
+
+	if(result.header.type != PACKET_AUTH_SUCCESS) {
+		packet_destroy(&result);
+		return 1;
+	}
+
+	packet_destroy(&result);
+
+	session->state = SESSION_AUTHENTICATED;
 
 	return 0;
 }
@@ -229,3 +282,58 @@ int session_client_connect(SESSION_T *session) {
 	return session_authenticate_client(session);
 }
 
+int session_verify_client(SESSION_T *session) {
+	PACKET packet;
+	packet_init(&packet);
+
+	if (packet_receive(session->socket, &packet) != 0) {
+		packet_destroy(&packet);
+		return 1;
+	}
+
+	if (packet.header.type != PACKET_AUTH_RESPONSE) {
+		packet_destroy(&packet);
+		return 1;
+	}
+
+	AUTH_RESPONSE_T response;
+
+	if (packet.header.payload_length != sizeof(AUTH_RESPONSE_T)) {
+		packet_destroy(&packet);
+		return 1;
+	}
+
+	memcpy(
+			&response,
+			packet.payload,
+			sizeof(response)
+		  );
+
+	packet_destroy(&packet);
+
+	memcpy(
+			session->crypto.peer_public_key,
+			response.public_key,
+			CRYPTO_PUBLIC_KEY_SIZE
+		  );
+
+	if (memcmp(
+				response.public_key,
+				TRUSTED_SERVER_KEY,
+				CRYPTO_PUBLIC_KEY_SIZE
+			  ) != 0) {
+		return 1;
+	}
+
+	if (crypto_verify_message(
+				response.public_key,
+				session->auth_nonce,
+				AUTH_NONCE_SIZE,
+				response.signature)) {
+		return 1;
+	}
+
+	session->crypto.verified = 1;
+
+	return 0;
+}
