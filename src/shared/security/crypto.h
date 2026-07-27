@@ -24,8 +24,6 @@
 #define CRYPTO_SESSION_KEY_SIZE 32
 #define CRYPTO_SIGNATURE_SIZE 64
 
-#define AUTH_NONCE_SIZE 16
-
 //--============
 // -- TYPEDEFS
 //--============
@@ -38,6 +36,9 @@ typedef struct {
 
 	unsigned char tx_key[CRYPTO_SESSION_KEY_SIZE];
 	unsigned char rx_key[CRYPTO_SESSION_KEY_SIZE];
+
+	unsigned char eph_public_key[crypto_kx_PUBLICKEYBYTES];
+	unsigned char eph_private_key[crypto_kx_SECRETKEYBYTES];
 
 	uint64_t tx_nonce;
 	uint64_t rx_nonce;

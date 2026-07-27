@@ -13,7 +13,7 @@ int force_logs = 0;
 //--============
 
 void log_msg(MSG_T message_t, RUNTIME_T runtime_t, char *message, ...) {
-	if (runtime_t == SERVER_RT && !is_idle() && !force_logs)
+	if ((runtime_t == SERVER_RT || runtime_t == OTHER_RT) && !is_idle() && !force_logs)
 		return;
 
 	char *fmt_message = NULL;

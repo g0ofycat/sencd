@@ -83,6 +83,9 @@ void start_client_environment(int argc, char *argv[]) {
 	pthread_create(&listener, NULL, client_listener, &data);
 	pthread_join(listener, NULL);
 
+	if (data.connection_status != 0)
+		return;
+
 	char input[256];
 
 	while (1) {

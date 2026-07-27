@@ -4,11 +4,13 @@
 // -- PRIVATE
 //--============
 
-static uint64_t next_session_id = 0;
-
 /// @brief generate id
-/// @return uint64_t: incrementing int
-static uint64_t generate_session_id() { return next_session_id++; }
+/// @return uint64_t: random bytes
+static uint64_t generate_session_id() {
+	uint64_t id;
+	randombytes_buf(&id, sizeof(id));
+	return id;
+}
 
 //--============
 // -- LOGIC
@@ -136,10 +138,28 @@ int session_server_connect(SESSION_T *session) {
 		return 1;
 	}
 
+	crypto_generate_nonce(
+			session->session_nonce,
+			SESSION_NONCE_SIZE
+			);
+
+	AUTH_SUCCESS_T success_data;
+	memset(&success_data, 0, sizeof(success_data));
+
+	success_data.session_id = session->session_id;
+
+	memcpy(
+			success_data.session_nonce,
+			session->session_nonce,
+			SESSION_NONCE_SIZE
+		  );
+
 	PACKET success = packet_construct(
 			(PACKET_CONSTRUCTOR_T){
 			.header_type = PACKET_AUTH_SUCCESS,
-			.header_version = session->protocol_version
+			.header_version = session->protocol_version,
+			.payload = (uint8_t *)&success_data,
+			.payload_length = sizeof(success_data)
 			}
 			);
 
@@ -150,7 +170,7 @@ int session_server_connect(SESSION_T *session) {
 
 	packet_destroy(&success);
 
-	session->state = SESSION_AUTHENTICATED;
+	session->state = SESSION_ESTABLISHED;
 
 	return 0;
 }
@@ -179,9 +199,18 @@ int session_authenticate_client(SESSION_T *session) {
 
 	packet_destroy(&packet);
 
-	memcpy(session->crypto.peer_public_key,
+	if (memcmp(
+				challenge.public_key,
+				TRUSTED_SERVER_KEY,
+				CRYPTO_PUBLIC_KEY_SIZE) != 0) {
+		return 1;
+	}
+
+	memcpy(
+			session->crypto.peer_public_key,
 			challenge.public_key,
-			CRYPTO_PUBLIC_KEY_SIZE);
+			CRYPTO_PUBLIC_KEY_SIZE
+		  );
 
 	AUTH_RESPONSE_T response;
 	memset(&response, 0, sizeof(response));
@@ -191,14 +220,6 @@ int session_authenticate_client(SESSION_T *session) {
 			session->crypto.public_key,
 			CRYPTO_PUBLIC_KEY_SIZE
 		  );
-
-	if (memcmp(
-				challenge.public_key,
-				TRUSTED_SERVER_KEY,
-				CRYPTO_PUBLIC_KEY_SIZE
-			  ) != 0) {
-		return 1;
-	}
 
 	if (crypto_sign_message(
 				&session->crypto,
@@ -231,19 +252,40 @@ int session_authenticate_client(SESSION_T *session) {
 	PACKET result;
 	packet_init(&result);
 
-	if(packet_receive(session->socket, &result) != 0) {
+	if (packet_receive(session->socket, &result) != 0) {
 		packet_destroy(&result);
 		return 1;
 	}
 
-	if(result.header.type != PACKET_AUTH_SUCCESS) {
+	if (result.header.type != PACKET_AUTH_SUCCESS) {
 		packet_destroy(&result);
 		return 1;
 	}
+
+	if (result.header.payload_length != sizeof(AUTH_SUCCESS_T)) {
+		packet_destroy(&result);
+		return 1;
+	}
+
+	AUTH_SUCCESS_T success;
+
+	memcpy(
+			&success,
+			result.payload,
+			sizeof(success)
+		  );
 
 	packet_destroy(&result);
 
-	session->state = SESSION_AUTHENTICATED;
+	session->session_id = success.session_id;
+
+	memcpy(
+			session->session_nonce,
+			success.session_nonce,
+			SESSION_NONCE_SIZE
+		  );
+
+	session->state = SESSION_ESTABLISHED;
 
 	return 0;
 }
