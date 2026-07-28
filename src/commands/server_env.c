@@ -80,6 +80,7 @@ static void *server_listener(void *arg) {
 			close(client);
 		}
 	}
+
 	return NULL;
 }
 

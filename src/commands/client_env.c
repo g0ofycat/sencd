@@ -171,6 +171,7 @@ void start_client_environment(int argc, char *argv[]) {
 
 		if (should_exit)
 			break;
+
 		if (ready <= 0)
 			continue;
 
