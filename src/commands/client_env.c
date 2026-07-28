@@ -31,13 +31,19 @@ static void execute_command(char *input) {
 /// @param port
 static void *client_listener(void *arg) {
 	CLIENT_THREAD_DATA *data = (CLIENT_THREAD_DATA *)arg;
-
 	if (connection_connect(&data->client->connection, data->ip, data->port) == 0) {
+		unsigned char trusted_key[CRYPTO_PUBLIC_KEY_SIZE];
+		char path[PATH_MAX];
+		int has_trusted = (crypto_config_path("server_trusted.key", path, sizeof(path)) == 0 &&
+				crypto_trust_key_load(path, trusted_key) == 0);
+
 		session_create(
 				&data->client->session,
 				SESSION_CLIENT,
 				data->client->connection.socket,
-				data->ip);
+				data->ip,
+				&data->client->identity,
+				has_trusted ? trusted_key : NULL);
 
 		if (session_client_connect(&data->client->session) != 0) {
 			log_msg(ERROR_MSG, CLIENT_RT, "Handshake Failed");
@@ -59,9 +65,14 @@ static void *client_listener(void *arg) {
 
 void start_client_environment(int argc, char *argv[]) {
 	CLIENT_T client;
-
 	connection_init(&client.connection);
 	session_init(&client.session, SESSION_CLIENT);
+
+	memset(&client.identity, 0, sizeof(client.identity));
+	if (crypto_identity_load_or_create(&client.identity, "client_identity.key") != 0) {
+		log_msg(ERROR_MSG, CLIENT_RT, "Failed to load or create client identity");
+		return;
+	}
 
 	pthread_t listener;
 

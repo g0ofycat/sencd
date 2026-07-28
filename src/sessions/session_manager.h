@@ -29,6 +29,7 @@ typedef struct {
 	SESSION_T *sessions[MAX_SESSIONS];
 	uint32_t session_count;
 	pthread_mutex_t lock;
+	CRYPTO_CONTEXT_T identity;
 } SESSION_MANAGER_T;
 
 //--============
@@ -41,6 +42,7 @@ void session_manager_init(SESSION_MANAGER_T *manager);
 
 /// @brief create, handshake, and add a session
 /// @param *manager
+/// @param role
 /// @param socket
 /// @param *ip
 /// @return SESSION_T*: NULL on failure

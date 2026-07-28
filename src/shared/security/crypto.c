@@ -16,9 +16,6 @@ void crypto_init(void) {
 
 void crypto_context_init(CRYPTO_CONTEXT_T *ctx) {
 	memset(ctx, 0, sizeof(*ctx));
-	ctx->verified = 0;
-	ctx->tx_nonce = 0;
-	ctx->rx_nonce = 0;
 }
 
 void crypto_generate_nonce(uint8_t *nonce, size_t size) {
@@ -68,6 +65,96 @@ int crypto_verify_message(
 				(unsigned long long)message_length,
 				public_key) != 0) {
 
+		return 1;
+	}
+
+	return 0;
+}
+
+int crypto_identity_load_or_create(CRYPTO_CONTEXT_T *ctx, const char *path) {
+	FILE *f = fopen(path, "rb");
+	if (f) {
+		size_t pub_read  = fread(ctx->public_key, 1, CRYPTO_PUBLIC_KEY_SIZE, f);
+		size_t priv_read = fread(ctx->private_key, 1, CRYPTO_PRIVATE_KEY_SIZE, f);
+		fclose(f);
+
+		if (pub_read == CRYPTO_PUBLIC_KEY_SIZE && priv_read == CRYPTO_PRIVATE_KEY_SIZE) {
+			unsigned char sig[CRYPTO_SIGNATURE_SIZE];
+			const unsigned char probe[] = "sencd-identity-check";
+			if (crypto_sign_message(ctx, probe, sizeof(probe), sig) == 0 &&
+					crypto_verify_message(ctx->public_key, probe, sizeof(probe), sig) == 0) {
+				return 0;
+			}
+			log_msg(WARN_MSG, OTHER_RT, "Identity file failed integrity check, regenerating");
+		}
+
+		log_msg(WARN_MSG, OTHER_RT, "Identity file is corrupt, regenerating");
+	}
+
+	if (crypto_generate_identity(ctx) != 0) {
+		return 1;
+	}
+
+	FILE *out = fopen(path, "wb");
+	if (out == NULL) {
+		log_msg(ERROR_MSG, OTHER_RT, "Failed to persist identity key");
+		return 1;
+	}
+
+	fwrite(ctx->public_key, 1, CRYPTO_PUBLIC_KEY_SIZE, out);
+	fwrite(ctx->private_key, 1, CRYPTO_PRIVATE_KEY_SIZE, out);
+	fclose(out);
+	chmod(path, S_IRUSR | S_IWUSR);
+
+	return 0;
+}
+
+int crypto_trust_key_load(const char *path, unsigned char out_key[CRYPTO_PUBLIC_KEY_SIZE]) {
+	FILE *f = fopen(path, "rb");
+	if (f == NULL) {
+		return 1;
+	}
+
+	size_t read_bytes = fread(out_key, 1, CRYPTO_PUBLIC_KEY_SIZE, f);
+	fclose(f);
+	return (read_bytes == CRYPTO_PUBLIC_KEY_SIZE) ? 0 : 1;
+}
+
+int crypto_trust_key_save(const char *path, const unsigned char key[CRYPTO_PUBLIC_KEY_SIZE]) {
+	FILE *f = fopen(path, "wb");
+	if (f == NULL) {
+		log_msg(ERROR_MSG, OTHER_RT, "Failed to persist trusted server key");
+		return 1;
+	}
+
+	fwrite(key, 1, CRYPTO_PUBLIC_KEY_SIZE, f);
+	fclose(f);
+	chmod(path, S_IRUSR | S_IWUSR);
+	return 0;
+}
+
+int crypto_config_path(const char *filename, char *out_path, size_t out_size) {
+	const char *home = getenv("HOME");
+	if (home == NULL || home[0] == '\0') {
+		struct passwd *pw = getpwuid(getuid());
+		if (pw == NULL) {
+			log_msg(ERROR_MSG, OTHER_RT, "Could not determine home directory");
+			return 1;
+		}
+		home = pw->pw_dir;
+	}
+
+	char dir[PATH_MAX];
+	if (snprintf(dir, sizeof(dir), "%s/%s", home, SENCD_CONFIG_DIRNAME) >= (int)sizeof(dir)) {
+		return 1;
+	}
+
+	if (mkdir(dir, S_IRWXU) != 0 && errno != EEXIST) {
+		log_msg(ERROR_MSG, OTHER_RT, "Failed to create config directory");
+		return 1;
+	}
+
+	if (snprintf(out_path, out_size, "%s/%s", dir, filename) >= (int)out_size) {
 		return 1;
 	}
 

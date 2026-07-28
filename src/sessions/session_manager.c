@@ -8,6 +8,13 @@ void session_manager_init(SESSION_MANAGER_T *manager) {
 	memset(manager->sessions, 0, sizeof(manager->sessions));
 	manager->session_count = 0;
 	pthread_mutex_init(&manager->lock, NULL);
+	memset(&manager->identity, 0, sizeof(manager->identity));
+
+	char path[PATH_MAX];
+	if (crypto_config_path("server_identity.key", path, sizeof(path)) != 0 ||
+			crypto_identity_load_or_create(&manager->identity, path) != 0) {
+		log_msg(ERROR_MSG, SERVER_RT, "Failed to load or create server identity");
+	}
 }
 
 SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager,
@@ -18,7 +25,7 @@ SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager,
 	if (session == NULL)
 		return NULL;
 
-	if (session_create(session, role, socket, ip) != 0) {
+	if (session_create(session, role, socket, ip, &manager->identity, NULL) != 0) {
 		free(session);
 		return NULL;
 	}

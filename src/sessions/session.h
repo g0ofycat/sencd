@@ -23,23 +23,6 @@
 #include "../shared/security/crypto.h"
 
 //--============
-// -- CONSTS
-//--============
-
-#define KEY_SIZE 32
-
-#define TRUSTED_SERVER_KEY_SIZE CRYPTO_PUBLIC_KEY_SIZE
-
-static const uint8_t TRUSTED_SERVER_KEY
-	[TRUSTED_SERVER_KEY_SIZE] = {0x8A, 0x3F, 0x91, 0xC4, 0x27, 0x6D, 0xE8,
-								 0x52, 0xB1, 0x0F, 0x74, 0xA9, 0x33, 0xD6,
-								 0x48, 0xFE, 0x19, 0x85, 0xCB, 0x60, 0x2E,
-								 0x97, 0x4A, 0xD1, 0x5C, 0xE3, 0x06, 0xB8,
-								 0x71, 0x4F, 0xAA, 0x23}; // TODO: obv make this
-														  // client side verif
-														  // of server
-
-//--============
 // -- TYPEDEFS
 //--============
 
@@ -57,6 +40,9 @@ typedef struct {
 	CRYPTO_CONTEXT_T crypto;
 	uint8_t auth_nonce[AUTH_NONCE_SIZE];
 	uint8_t session_nonce[SESSION_NONCE_SIZE];
+
+	unsigned char trusted_peer_key[CRYPTO_PUBLIC_KEY_SIZE];
+	uint8_t has_trusted_peer_key;
 
 	char ip[INET_ADDRSTRLEN];
 	uint64_t session_id;
@@ -86,9 +72,12 @@ void session_init(SESSION_T *session, SESSION_ROLE_T role);
 /// @param role
 /// @param socket
 /// @param *ip
+/// @param *identity
+/// @param *trusted_peer_key
 /// @return int: success bool
 int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket,
-				   const char *ip);
+				   const char *ip, const CRYPTO_CONTEXT_T *identity,
+				   const unsigned char *trusted_peer_key);
 
 /// @brief destroy a session
 /// @param *session

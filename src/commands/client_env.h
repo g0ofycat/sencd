@@ -41,6 +41,7 @@ typedef struct {
 typedef struct {
 	CONNECTION_T connection;
 	SESSION_T session;
+	CRYPTO_CONTEXT_T identity;
 } CLIENT_T;
 
 typedef struct {

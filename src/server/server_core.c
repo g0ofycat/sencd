@@ -36,7 +36,6 @@ static void server_cleanup(SERVER_T *server) {
 void server_init(SERVER_T *server) {
 	memset(server, 0, sizeof(*server));
 	server->socket = -1;
-	server->running = 0;
 }
 
 int server_start(SERVER_T *server, uint16_t port) {

@@ -26,8 +26,17 @@ void session_init(SESSION_T *session, SESSION_ROLE_T role) {
 }
 
 int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket,
-		const char *ip) {
+		const char *ip, const CRYPTO_CONTEXT_T *identity,
+		const unsigned char *trusted_peer_key) {
 	session_init(session, role);
+
+	memcpy(session->crypto.public_key, identity->public_key, CRYPTO_PUBLIC_KEY_SIZE);
+	memcpy(session->crypto.private_key, identity->private_key, CRYPTO_PRIVATE_KEY_SIZE);
+
+	if (trusted_peer_key != NULL) {
+		memcpy(session->trusted_peer_key, trusted_peer_key, CRYPTO_PUBLIC_KEY_SIZE);
+		session->has_trusted_peer_key = 1;
+	}
 
 	session->socket = socket;
 	session->session_id = generate_session_id();
@@ -199,11 +208,20 @@ int session_authenticate_client(SESSION_T *session) {
 
 	packet_destroy(&packet);
 
-	if (memcmp(
-				challenge.public_key,
-				TRUSTED_SERVER_KEY,
-				CRYPTO_PUBLIC_KEY_SIZE) != 0) {
-		return 1;
+	if (session->has_trusted_peer_key) {
+		if (memcmp(challenge.public_key, session->trusted_peer_key, CRYPTO_PUBLIC_KEY_SIZE) != 0) {
+			log_msg(ERROR_MSG, CLIENT_RT,
+					"Server key does not match trusted key");
+			return 1;
+		}
+	} else {
+		memcpy(session->trusted_peer_key, challenge.public_key, CRYPTO_PUBLIC_KEY_SIZE);
+		session->has_trusted_peer_key = 1;
+		char save_path[PATH_MAX];
+		if (crypto_config_path("server_trusted.key", save_path, sizeof(save_path)) == 0) {
+			crypto_trust_key_save(save_path, challenge.public_key);
+		}
+		log_msg(WARN_MSG, CLIENT_RT, "Trusting server key on first connection");
 	}
 
 	memcpy(
@@ -358,14 +376,6 @@ int session_verify_client(SESSION_T *session) {
 			response.public_key,
 			CRYPTO_PUBLIC_KEY_SIZE
 		  );
-
-	if (memcmp(
-				response.public_key,
-				TRUSTED_SERVER_KEY,
-				CRYPTO_PUBLIC_KEY_SIZE
-			  ) != 0) {
-		return 1;
-	}
 
 	if (crypto_verify_message(
 				response.public_key,

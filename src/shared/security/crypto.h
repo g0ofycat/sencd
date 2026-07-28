@@ -10,14 +10,22 @@
 
 #include <sodium.h>
 
+#include <errno.h>
+#include <limits.h>
+#include <pwd.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
+#include <sys/stat.h>
 
 //--============
 // -- CONSTS
 //--============
+
+#define SENCD_CONFIG_DIRNAME "../../../.sencd-cache/"
 
 #define CRYPTO_PUBLIC_KEY_SIZE 32
 #define CRYPTO_PRIVATE_KEY_SIZE 64
@@ -87,5 +95,25 @@ int crypto_verify_message(
 	const unsigned char public_key[CRYPTO_PUBLIC_KEY_SIZE],
 	const unsigned char *message, size_t message_length,
 	const unsigned char signature[CRYPTO_SIGNATURE_SIZE]);
+
+/// @brief load a persisted identity key pair from disk, or generate and save
+/// one if none exists
+/// @param *ctx: crypto context to populate
+/// @param *path: file path for the identity key
+/// @return int: success status
+int crypto_identity_load_or_create(CRYPTO_CONTEXT_T *ctx, const char *path);
+
+/// @brief save a raw public key to disk
+/// @return int: success status
+int crypto_trust_key_save(const char *path,
+						  const unsigned char key[CRYPTO_PUBLIC_KEY_SIZE]);
+
+/// @brief load a raw public key from disk
+/// @return int: 0 on success, 1 if missing or corrupt
+int crypto_trust_key_load(const char *path,
+						  unsigned char out_key[CRYPTO_PUBLIC_KEY_SIZE]);
+
+/// @brief mkdir and config SENCD_CONFIG_DIRNAME
+int crypto_config_path(const char *filename, char *out_path, size_t out_size);
 
 #endif
