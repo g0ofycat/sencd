@@ -25,7 +25,7 @@
 // -- CONSTS
 //--============
 
-#define SENCD_CONFIG_DIRNAME "../../../.sencd-cache/"
+#define SENCD_CONFIG_DIRNAME ".sencd-config"
 
 #define CRYPTO_PUBLIC_KEY_SIZE 32
 #define CRYPTO_PRIVATE_KEY_SIZE 64
