@@ -1,10 +1,31 @@
 #include "client_env.h"
 
 //--============
+// -- COMMANDS
+//--============
+
+static CLIENT_T *active_client = NULL;
+static volatile int should_exit = 0;
+
+static void cmd_disconnect(char **argv) {
+	if (active_client == NULL || active_client->session.state != SESSION_ESTABLISHED) {
+		log_msg(WARN_MSG, CLIENT_RT, "Not currently connected");
+		return;
+	}
+
+	session_destroy(&active_client->session);
+	active_client->connection.socket = -1;
+	active_client->connection.state = CONNECTION_DISCONNECTED;
+
+	log_msg(SUCCESS_MSG, CLIENT_RT, "Disconnected from server");
+	should_exit = 1;
+}
+
+//--============
 // -- CONFIG
 //--============
 
-static CLIENT_COMMAND commands[] = {{"clear", NULL, cmd_clear}};
+static CLIENT_COMMAND commands[] = {{"clear", NULL, cmd_clear}, {"disconnect", NULL, cmd_disconnect}};
 
 //--============
 // -- PRIVATE
@@ -59,17 +80,51 @@ static void *client_listener(void *arg) {
 	return NULL;
 }
 
+static void *client_receiver(void *arg) {
+	CLIENT_T *client = (CLIENT_T *)arg;
+
+	while (client->session.state == SESSION_ESTABLISHED) {
+		PACKET packet;
+		packet_init(&packet);
+
+		if (packet_receive(client->session.socket, &packet) != 0) {
+			packet_destroy(&packet);
+			break;
+		}
+
+		if (packet.header.type == PACKET_DISCONNECT) {
+			packet_destroy(&packet);
+			log_msg(WARN_MSG, CLIENT_RT, "Server closed the connection");
+			break;
+		}
+
+		packet_destroy(&packet);
+	}
+
+	if (client->session.state == SESSION_ESTABLISHED) {
+		session_destroy(&client->session);
+		client->connection.socket = -1;
+		client->connection.state = CONNECTION_DISCONNECTED;
+	}
+
+	should_exit = 1;
+	return NULL;
+}
+
 //--============
 // -- LOGIC
 //--============
 
 void start_client_environment(int argc, char *argv[]) {
 	CLIENT_T client;
+	active_client = &client;
 	connection_init(&client.connection);
 	session_init(&client.session, SESSION_CLIENT);
 
 	memset(&client.identity, 0, sizeof(client.identity));
-	if (crypto_identity_load_or_create(&client.identity, "client_identity.key") != 0) {
+	char identity_path[PATH_MAX];
+	if (crypto_config_path("client_identity.key", identity_path, sizeof(identity_path)) != 0 ||
+			crypto_identity_load_or_create(&client.identity, identity_path) != 0) {
 		log_msg(ERROR_MSG, CLIENT_RT, "Failed to load or create client identity");
 		return;
 	}
@@ -97,18 +152,41 @@ void start_client_environment(int argc, char *argv[]) {
 	if (data.connection_status != 0)
 		return;
 
+	pthread_t receiver;
+	pthread_create(&receiver, NULL, client_receiver, &client);
+	pthread_detach(receiver);
+
 	char input[256];
 
-	while (1) {
-		printf(SHELL_PREFIX);
-		fflush(stdout);
+	printf(SHELL_PREFIX);
+	fflush(stdout);
+
+	while (!should_exit) {
+		fd_set readfds;
+		FD_ZERO(&readfds);
+		FD_SET(STDIN_FILENO, &readfds);
+		struct timeval timeout = {.tv_sec = 1, .tv_usec = 0};
+
+		int ready = select(STDIN_FILENO + 1, &readfds, NULL, NULL, &timeout);
+
+		if (should_exit)
+			break;
+		if (ready <= 0)
+			continue;
 
 		if (fgets(input, sizeof(input), stdin) == NULL)
 			break;
 
 		input[strcspn(input, "\n")] = 0;
 		execute_command(input);
+
+		if (should_exit)
+			break;
+
+		printf(SHELL_PREFIX);
+		fflush(stdout);
 	}
 
-	connection_disconnect(&client.connection);
+	if (client.connection.state != CONNECTION_DISCONNECTED)
+		connection_disconnect(&client.connection);
 }

@@ -1,10 +1,29 @@
 #include "server_env.h"
 
 //--============
+// -- COMMANDS
+//--============
+
+static SERVER_T *active_server = NULL;
+static volatile int shutdown_requested = 0;
+
+static void cmd_shutdown(char **argv) {
+	force_logs = 1;
+	if (active_server == NULL || !active_server->running) {
+		log_msg(WARN_MSG, SERVER_RT, "Server is not running");
+		return;
+	}
+
+	log_msg(INFO_MSG, SERVER_RT, "Shutdown requested");
+	force_logs = 0;
+	shutdown_requested = 1;
+}
+
+//--============
 // -- CONFIG
 //--============
 
-static SERVER_COMMAND commands[] = {{"idle", NULL, idle_mode}, {"clear", NULL, cmd_clear}};
+static SERVER_COMMAND commands[] = {{"idle", NULL, idle_mode}, {"clear", NULL, cmd_clear}, {"shutdown", NULL, cmd_shutdown}};
 
 //--============
 // -- PRIVATE
@@ -31,10 +50,25 @@ static void execute_command(char *input) {
 /// @param *arg
 static void *server_listener(void *arg) {
 	SERVER_LISTENER_DATA *listener = arg;
-
 	while (listener->server->running) {
-		int client = server_accept(listener->server);
+		fd_set readfds;
+		FD_ZERO(&readfds);
+		FD_SET(listener->server->socket, &readfds);
+		struct timeval timeout = {.tv_sec = 1, .tv_usec = 0};
+		int ready = select(listener->server->socket + 1, &readfds, NULL, NULL, &timeout);
 
+		if (!listener->server->running)
+			break;
+
+		if (ready < 0) {
+			if (errno == EINTR)
+				continue;
+			break;
+		}
+		if (ready == 0)
+			continue;
+
+		int client = server_accept(listener->server);
 		if (client < 0)
 			continue;
 
@@ -43,11 +77,9 @@ static void *server_listener(void *arg) {
 					SESSION_SERVER,
 					client,
 					listener->ip) == NULL) {
-
 			close(client);
 		}
 	}
-
 	return NULL;
 }
 
@@ -57,6 +89,7 @@ static void *server_listener(void *arg) {
 
 void start_server_environment(int argc, char *argv[]) {
 	SERVER_T server;
+	active_server = &server;
 	server_init(&server);
 
 	uint16_t port = SERVER_DEFAULT_PORT;
@@ -94,7 +127,7 @@ void start_server_environment(int argc, char *argv[]) {
 
 	char input[256];
 
-	while (1) {
+	while (!shutdown_requested) {
 		printf(SHELL_PREFIX);
 		fflush(stdout);
 
@@ -107,5 +140,6 @@ void start_server_environment(int argc, char *argv[]) {
 
 	server_shutdown(&server);
 	pthread_join(listener_thread, NULL);
+	session_manager_disconnect_all(&session_manager);
 	session_manager_destroy(&session_manager);
 }

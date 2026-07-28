@@ -50,6 +50,35 @@ int session_manager_disconnect(SESSION_MANAGER_T *manager,
 	return session_manager_remove(manager, session_id);
 }
 
+void session_manager_disconnect_all(SESSION_MANAGER_T *manager) {
+	pthread_mutex_lock(&manager->lock);
+
+	for (uint32_t i = 0; i < MAX_SESSIONS; i++) {
+		SESSION_T *session = manager->sessions[i];
+		if (session != NULL) {
+			PACKET notice = packet_construct(
+					(PACKET_CONSTRUCTOR_T){
+					.header_type = PACKET_DISCONNECT,
+					.header_version = session->protocol_version,
+					.flags = PACKET_FLAG_NONE,
+					.payload = NULL,
+					.payload_length = 0
+					}
+					);
+
+			packet_send(session->socket, &notice);
+			packet_destroy(&notice);
+
+			session_destroy(session);
+			free(session);
+			manager->sessions[i] = NULL;
+		}
+	}
+
+	manager->session_count = 0;
+	pthread_mutex_unlock(&manager->lock);
+}
+
 void session_manager_destroy(SESSION_MANAGER_T *manager) {
 	pthread_mutex_lock(&manager->lock);
 
