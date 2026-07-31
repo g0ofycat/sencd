@@ -1,6 +1,6 @@
 # sencd
 
-**sencd** *(Server Encryption Daemon; pronounced as "Second-D")* is a tool that allows you to reroute traffic, mainly from the internet, through a secure, encrypted tunnel to another server (e.g. a laptop running an Ubuntu Server) to help protect your privacy or to mask your public IP address
+**sencd** *(Server Encryption Daemon; pronounced as "Second-D")* is a lightweight tool that allows you to reroute traffic, mainly from the internet, through a secure, encrypted tunnel to another server (e.g. a laptop running an Ubuntu Server) to help protect your privacy or to mask your public IP address
 
 ## Server Support
 
@@ -20,6 +20,10 @@ Every server reroutes packets differently, either through configuration files or
 ---
 
 ### Ubuntu Server
+
+1. Create a subnet (Optional) and ensure you IP is publically accessable using a port forwarding software like *ngrok*.
+
+2. Allow for connections on your ubuntu server by changing the network rules
 
 ## Client Support
 

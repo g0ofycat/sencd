@@ -67,11 +67,9 @@ static void *client_listener(void *arg) {
 				has_trusted ? trusted_key : NULL);
 
 		if (session_client_connect(&data->client->session) != 0) {
-			log_msg(ERROR_MSG, CLIENT_RT, "Handshake Failed");
 			data->connection_status = 1;
 			return NULL;
 		}
-		log_msg(SUCCESS_MSG, CLIENT_RT, "Handshake Completed");
 	} else {
 		log_msg(ERROR_MSG, CLIENT_RT, "Connection Failed");
 		data->connection_status = 1;

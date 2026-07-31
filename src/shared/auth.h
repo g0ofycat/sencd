@@ -25,11 +25,14 @@
 
 typedef struct {
 	uint8_t public_key[CRYPTO_PUBLIC_KEY_SIZE];
+	uint8_t eph_public_key[crypto_kx_PUBLICKEYBYTES];
 	uint8_t nonce[AUTH_NONCE_SIZE];
+	uint8_t signature[CRYPTO_SIGNATURE_SIZE];
 } AUTH_CHALLENGE_T;
 
 typedef struct {
 	uint8_t public_key[CRYPTO_PUBLIC_KEY_SIZE];
+	uint8_t eph_public_key[crypto_kx_PUBLICKEYBYTES];
 	uint8_t signature[CRYPTO_SIGNATURE_SIZE];
 } AUTH_RESPONSE_T;
 

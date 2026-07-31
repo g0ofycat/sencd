@@ -69,13 +69,21 @@ int session_authenticate_server(SESSION_T *session) {
 
 	crypto_generate_nonce(session->auth_nonce, AUTH_NONCE_SIZE);
 
-	memcpy(challenge.public_key,
-			session->crypto.public_key,
-			CRYPTO_PUBLIC_KEY_SIZE);
+	if (crypto_generate_ephemeral(&session->crypto) != 0) {
+		return 1;
+	}
 
-	memcpy(challenge.nonce,
-			session->auth_nonce,
-			AUTH_NONCE_SIZE);
+	memcpy(challenge.public_key, session->crypto.public_key, CRYPTO_PUBLIC_KEY_SIZE);
+	memcpy(challenge.eph_public_key, session->crypto.eph_public_key, crypto_kx_PUBLICKEYBYTES);
+	memcpy(challenge.nonce, session->auth_nonce, AUTH_NONCE_SIZE);
+
+	unsigned char sign_buf[AUTH_NONCE_SIZE + crypto_kx_PUBLICKEYBYTES];
+	memcpy(sign_buf, challenge.nonce, AUTH_NONCE_SIZE);
+	memcpy(sign_buf + AUTH_NONCE_SIZE, challenge.eph_public_key, crypto_kx_PUBLICKEYBYTES);
+
+	if (crypto_sign_message(&session->crypto, sign_buf, sizeof(sign_buf), challenge.signature) != 0) {
+		return 1;
+	}
 
 	PACKET packet = packet_construct(
 			(PACKET_CONSTRUCTOR_T){
@@ -96,6 +104,8 @@ int session_authenticate_server(SESSION_T *session) {
 	packet_destroy(&packet);
 
 	session->state = SESSION_WAIT_AUTH;
+
+	log_msg(SUCCESS_MSG, SERVER_RT, "Requested for client authentication");
 
 	return 0;
 }
@@ -230,20 +240,35 @@ int session_authenticate_client(SESSION_T *session) {
 			CRYPTO_PUBLIC_KEY_SIZE
 		  );
 
+	unsigned char verify_buf[AUTH_NONCE_SIZE + crypto_kx_PUBLICKEYBYTES];
+	memcpy(verify_buf, challenge.nonce, AUTH_NONCE_SIZE);
+	memcpy(verify_buf + AUTH_NONCE_SIZE, challenge.eph_public_key, crypto_kx_PUBLICKEYBYTES);
+
+	if (crypto_verify_message(challenge.public_key, verify_buf, sizeof(verify_buf), challenge.signature) != 0) {
+		log_msg(ERROR_MSG, CLIENT_RT, "Server challenge signature invalid, possible tampering");
+		return 1;
+	}
+
+	if (crypto_generate_ephemeral(&session->crypto) != 0) {
+		return 1;
+	}
+
+	if (crypto_derive_client_keys(&session->crypto, challenge.eph_public_key) != 0) {
+		log_msg(ERROR_MSG, CLIENT_RT, "Failed to derive session keys");
+		return 1;
+	}
+
 	AUTH_RESPONSE_T response;
 	memset(&response, 0, sizeof(response));
 
-	memcpy(
-			response.public_key,
-			session->crypto.public_key,
-			CRYPTO_PUBLIC_KEY_SIZE
-		  );
+	memcpy(response.public_key, session->crypto.public_key, CRYPTO_PUBLIC_KEY_SIZE);
+	memcpy(response.eph_public_key, session->crypto.eph_public_key, crypto_kx_PUBLICKEYBYTES);
 
-	if (crypto_sign_message(
-				&session->crypto,
-				challenge.nonce,
-				AUTH_NONCE_SIZE,
-				response.signature) != 0) {
+	unsigned char resp_sign_buf[AUTH_NONCE_SIZE + crypto_kx_PUBLICKEYBYTES];
+	memcpy(resp_sign_buf, challenge.nonce, AUTH_NONCE_SIZE);
+	memcpy(resp_sign_buf + AUTH_NONCE_SIZE, response.eph_public_key, crypto_kx_PUBLICKEYBYTES);
+
+	if (crypto_sign_message(&session->crypto, resp_sign_buf, sizeof(resp_sign_buf), response.signature) != 0) {
 		return 1;
 	}
 
@@ -305,6 +330,8 @@ int session_authenticate_client(SESSION_T *session) {
 
 	session->state = SESSION_ESTABLISHED;
 
+	log_msg(SUCCESS_MSG, CLIENT_RT, "Session authenticated and established");
+
 	return 0;
 }
 
@@ -339,6 +366,8 @@ int session_client_connect(SESSION_T *session) {
 
 	packet_destroy(&response);
 
+	log_msg(SUCCESS_MSG, CLIENT_RT, "Handshake completed");
+
 	return session_authenticate_client(session);
 }
 
@@ -371,17 +400,18 @@ int session_verify_client(SESSION_T *session) {
 
 	packet_destroy(&packet);
 
-	memcpy(
-			session->crypto.peer_public_key,
-			response.public_key,
-			CRYPTO_PUBLIC_KEY_SIZE
-		  );
+	memcpy(session->crypto.peer_public_key, response.public_key, CRYPTO_PUBLIC_KEY_SIZE);
 
-	if (crypto_verify_message(
-				response.public_key,
-				session->auth_nonce,
-				AUTH_NONCE_SIZE,
-				response.signature)) {
+	unsigned char verify_buf[AUTH_NONCE_SIZE + crypto_kx_PUBLICKEYBYTES];
+	memcpy(verify_buf, session->auth_nonce, AUTH_NONCE_SIZE);
+	memcpy(verify_buf + AUTH_NONCE_SIZE, response.eph_public_key, crypto_kx_PUBLICKEYBYTES);
+
+	if (crypto_verify_message(response.public_key, verify_buf, sizeof(verify_buf), response.signature)) {
+		return 1;
+	}
+
+	if (crypto_derive_server_keys(&session->crypto, response.eph_public_key) != 0) {
+		log_msg(ERROR_MSG, SERVER_RT, "Failed to derive session keys");
 		return 1;
 	}
 

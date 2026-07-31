@@ -160,3 +160,35 @@ int crypto_config_path(const char *filename, char *out_path, size_t out_size) {
 
 	return 0;
 }
+
+int crypto_generate_ephemeral(CRYPTO_CONTEXT_T *ctx) {
+	if (crypto_kx_keypair(ctx->eph_public_key, ctx->eph_private_key) != 0) {
+		log_msg(ERROR_MSG, OTHER_RT, "Failed to generate ephemeral key pair");
+		return 1;
+	}
+	return 0;
+}
+
+int crypto_derive_server_keys(CRYPTO_CONTEXT_T *ctx,
+		const unsigned char client_eph_pub[crypto_kx_PUBLICKEYBYTES]) {
+	if (crypto_kx_server_session_keys(
+				ctx->rx_key, ctx->tx_key,
+				ctx->eph_public_key, ctx->eph_private_key,
+				client_eph_pub) != 0) {
+		log_msg(ERROR_MSG, OTHER_RT, "Failed to derive server session keys");
+		return 1;
+	}
+	return 0;
+}
+
+int crypto_derive_client_keys(CRYPTO_CONTEXT_T *ctx,
+		const unsigned char server_eph_pub[crypto_kx_PUBLICKEYBYTES]) {
+	if (crypto_kx_client_session_keys(
+				ctx->rx_key, ctx->tx_key,
+				ctx->eph_public_key, ctx->eph_private_key,
+				server_eph_pub) != 0) {
+		log_msg(ERROR_MSG, OTHER_RT, "Failed to derive client session keys");
+		return 1;
+	}
+	return 0;
+}

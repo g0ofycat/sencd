@@ -116,4 +116,25 @@ int crypto_trust_key_load(const char *path,
 /// @brief mkdir and config SENCD_CONFIG_DIRNAME
 int crypto_config_path(const char *filename, char *out_path, size_t out_size);
 
+/// @brief generate an ephemeral key-exchange keypair for this session
+/// @param *ctx: crypto context to populate
+/// @return int: success status
+int crypto_generate_ephemeral(CRYPTO_CONTEXT_T *ctx);
+
+/// @brief derive session tx/rx keys as the server side of the exchange
+/// @param *ctx: crypto context (own eph keys already generated)
+/// @param client_eph_pub: peer's ephemeral public key
+/// @return int: success status
+int crypto_derive_server_keys(
+	CRYPTO_CONTEXT_T *ctx,
+	const unsigned char client_eph_pub[crypto_kx_PUBLICKEYBYTES]);
+
+/// @brief derive session tx/rx keys as the client side of the exchange
+/// @param *ctx: crypto context (own eph keys already generated)
+/// @param server_eph_pub: peer's ephemeral public key
+/// @return int: success status
+int crypto_derive_client_keys(
+	CRYPTO_CONTEXT_T *ctx,
+	const unsigned char server_eph_pub[crypto_kx_PUBLICKEYBYTES]);
+
 #endif
