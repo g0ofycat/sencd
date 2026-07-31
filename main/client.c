@@ -24,7 +24,6 @@ int main(int argc, char *argv[]) {
 				"-    connect <argv='IP OF SERVER': default='127.0.0.1'> <argv='PORT NUMBER': default='8080'> [Connect to a target server on its port number]\n"
 				"-    attach [Connect a client environment to a currently running daemon]\n"
 				"-    disconnect [Disconnect from the current server, if any]\n"
-				"-    setinit <argv='none || startup': default='none'> [Change sencd-client's init method]\n-        none: sencd doesn't attempt to connect to latest disconnected server when the computer reboots\n-        startup: sencd attempts to connect to the latest disconnected server on computer reboot\n"
 				"- DIAGNOSTICS [ENVIRONMENT ONLY]:\n"
 				"-    status [Get the current status of the server]\n"
 				"-    ping [Ping the server to check availability]\n"
@@ -36,7 +35,7 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "connect") == 0) {
 		start_client_environment(argc, argv);
 	} else {
-		printf("sencd-client: Invalid command, 'connect' and 'setinit' are the only commands you can run while not in a client environment");
+		printf("sencd-client: Invalid command, 'connect' is the only commands you can run while not in a client environment");
 	}
 
 	return 0;

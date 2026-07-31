@@ -7,6 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(SODIUM REQUIRED libsodium)
+pkg_check_modules(CJSON REQUIRED libcjson)
 
 add_executable(sencd-client
 	main/client.c
@@ -33,10 +34,11 @@ target_include_directories(sencd-client PRIVATE
 	src/sessions
 	src/tunnel
 	${SODIUM_INCLUDE_DIRS}
+	${CJSON_INCLUDE_DIRS}
 )
 
-target_link_directories(sencd-client PRIVATE ${SODIUM_LIBRARY_DIRS})
-target_link_libraries(sencd-client PRIVATE ${SODIUM_LIBRARIES})
+target_link_directories(sencd-client PRIVATE ${SODIUM_LIBRARY_DIRS} ${CJSON_LIBRARY_DIRS})
+target_link_libraries(sencd-client PRIVATE ${SODIUM_LIBRARIES} ${CJSON_LIBRARIES})
 
 add_executable(sencd-server
 	main/server.c
@@ -63,7 +65,8 @@ target_include_directories(sencd-server PRIVATE
 	src/sessions
 	src/tunnel
 	${SODIUM_INCLUDE_DIRS}
+	${CJSON_INCLUDE_DIRS}
 )
 
-target_link_directories(sencd-server PRIVATE ${SODIUM_LIBRARY_DIRS})
-target_link_libraries(sencd-server PRIVATE ${SODIUM_LIBRARIES})
+target_link_directories(sencd-server PRIVATE ${SODIUM_LIBRARY_DIRS} ${CJSON_LIBRARY_DIRS})
+target_link_libraries(sencd-server PRIVATE ${SODIUM_LIBRARIES} ${CJSON_LIBRARIES})
