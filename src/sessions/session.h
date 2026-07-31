@@ -22,6 +22,8 @@
 #include "../shared/auth.h"
 #include "../shared/security/crypto.h"
 
+#include "../tunnel/udp_tunnel.h"
+
 //--============
 // -- TYPEDEFS
 //--============
@@ -46,6 +48,8 @@ typedef struct {
 
 	char ip[INET_ADDRSTRLEN];
 	uint64_t session_id;
+
+	UDP_TUNNEL_T udp;
 
 	time_t created;
 	time_t last_seen;

@@ -41,6 +41,8 @@ int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket,
 	session->socket = socket;
 	session->session_id = generate_session_id();
 
+	udp_tunnel_init(&session->udp, session->session_id);
+
 	session->created = time(NULL);
 	session->last_seen = session->created;
 
@@ -54,9 +56,10 @@ int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket,
 }
 
 void session_destroy(SESSION_T *session) {
-	if (session->socket >= 0) {
+	if (session->socket >= 0)
 		close(session->socket);
-	}
+
+	udp_tunnel_close(&session->udp);
 
 	memset(session, 0, sizeof(*session));
 	session->socket = -1;

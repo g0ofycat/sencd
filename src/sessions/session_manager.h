@@ -30,6 +30,7 @@ typedef struct {
 	uint32_t session_count;
 	pthread_mutex_t lock;
 	CRYPTO_CONTEXT_T identity;
+	int udp_socket;
 } SESSION_MANAGER_T;
 
 //--============
@@ -81,5 +82,15 @@ int session_manager_remove(SESSION_MANAGER_T *manager, uint64_t session_id);
 /// @param session_id
 /// @return SESSION_T*: session or NULL
 SESSION_T *session_manager_get(SESSION_MANAGER_T *manager, uint64_t session_id);
+
+/// @brief bind UDP endpoint to managers port
+/// @param *manager
+/// @param port
+/// @return int: success bool
+int session_manager_udp_bind(SESSION_MANAGER_T *manager, uint16_t port);
+
+/// @brief recv packets from UDP socket
+/// @param *arg
+void *session_manager_udp_listener(void *arg);
 
 #endif

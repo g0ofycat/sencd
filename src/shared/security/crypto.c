@@ -1,7 +1,5 @@
 #include "crypto.h"
 
-#include "../debug/logs.h"
-
 //--============
 // -- LOGIC
 //--============
@@ -63,10 +61,8 @@ int crypto_verify_message(
 				signature,
 				message,
 				(unsigned long long)message_length,
-				public_key) != 0) {
-
+				public_key) != 0)
 		return 1;
-	}
 
 	return 0;
 }
@@ -81,19 +77,16 @@ int crypto_identity_load_or_create(CRYPTO_CONTEXT_T *ctx, const char *path) {
 		if (pub_read == CRYPTO_PUBLIC_KEY_SIZE && priv_read == CRYPTO_PRIVATE_KEY_SIZE) {
 			unsigned char sig[CRYPTO_SIGNATURE_SIZE];
 			const unsigned char probe[] = "sencd-identity-check";
-			if (crypto_sign_message(ctx, probe, sizeof(probe), sig) == 0 &&
-					crypto_verify_message(ctx->public_key, probe, sizeof(probe), sig) == 0) {
+			if (crypto_sign_message(ctx, probe, sizeof(probe), sig) == 0 && crypto_verify_message(ctx->public_key, probe, sizeof(probe), sig) == 0)
 				return 0;
-			}
 			log_msg(WARN_MSG, OTHER_RT, "Identity file failed integrity check, regenerating");
 		}
 
 		log_msg(WARN_MSG, OTHER_RT, "Identity file is corrupt, regenerating");
 	}
 
-	if (crypto_generate_identity(ctx) != 0) {
+	if (crypto_generate_identity(ctx) != 0)
 		return 1;
-	}
 
 	FILE *out = fopen(path, "wb");
 	if (out == NULL) {
@@ -145,18 +138,16 @@ int crypto_config_path(const char *filename, char *out_path, size_t out_size) {
 	}
 
 	char dir[PATH_MAX];
-	if (snprintf(dir, sizeof(dir), "%s/%s", home, SENCD_CONFIG_DIRNAME) >= (int)sizeof(dir)) {
+	if (snprintf(dir, sizeof(dir), "%s/%s", home, SENCD_CONFIG_DIRNAME) >= (int)sizeof(dir))
 		return 1;
-	}
 
 	if (mkdir(dir, S_IRWXU) != 0 && errno != EEXIST) {
 		log_msg(ERROR_MSG, OTHER_RT, "Failed to create config directory");
 		return 1;
 	}
 
-	if (snprintf(out_path, out_size, "%s/%s", dir, filename) >= (int)out_size) {
+	if (snprintf(out_path, out_size, "%s/%s", dir, filename) >= (int)out_size)
 		return 1;
-	}
 
 	return 0;
 }

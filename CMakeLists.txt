@@ -19,6 +19,7 @@ add_executable(sencd-client
 	src/shared/security/crypto.c
 	src/sessions/session.c
 	src/sessions/session_manager.c
+	src/tunnel/udp_tunnel.c
 )
 
 target_include_directories(sencd-client PRIVATE
@@ -30,6 +31,7 @@ target_include_directories(sencd-client PRIVATE
 	src/shared
 	src/shared/security
 	src/sessions
+	src/tunnel
 	${SODIUM_INCLUDE_DIRS}
 )
 
@@ -47,6 +49,7 @@ add_executable(sencd-server
 	src/shared/security/crypto.c
 	src/sessions/session.c
 	src/sessions/session_manager.c
+	src/tunnel/udp_tunnel.c
 )
 
 target_include_directories(sencd-server PRIVATE
@@ -58,6 +61,7 @@ target_include_directories(sencd-server PRIVATE
 	src/shared
 	src/shared/security
 	src/sessions
+	src/tunnel
 	${SODIUM_INCLUDE_DIRS}
 )
 

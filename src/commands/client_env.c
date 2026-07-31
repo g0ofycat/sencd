@@ -46,38 +46,8 @@ static void execute_command(char *input) {
 	log_msg(ERROR_MSG, CLIENT_RT, "Unknown command\n");
 }
 
-/// @brief thread for connecting and authenticating to the server
+/// @brief recv packets from the server
 /// @param *arg
-/// @param *ip
-/// @param port
-static void *client_listener(void *arg) {
-	CLIENT_THREAD_DATA *data = (CLIENT_THREAD_DATA *)arg;
-	if (connection_connect(&data->client->connection, data->ip, data->port) == 0) {
-		unsigned char trusted_key[CRYPTO_PUBLIC_KEY_SIZE];
-		char path[PATH_MAX];
-		int has_trusted = (crypto_config_path("server_trusted.key", path, sizeof(path)) == 0 &&
-				crypto_trust_key_load(path, trusted_key) == 0);
-
-		session_create(
-				&data->client->session,
-				SESSION_CLIENT,
-				data->client->connection.socket,
-				data->ip,
-				&data->client->identity,
-				has_trusted ? trusted_key : NULL);
-
-		if (session_client_connect(&data->client->session) != 0) {
-			data->connection_status = 1;
-			return NULL;
-		}
-	} else {
-		log_msg(ERROR_MSG, CLIENT_RT, "Connection Failed");
-		data->connection_status = 1;
-	}
-
-	return NULL;
-}
-
 static void *client_receiver(void *arg) {
 	CLIENT_T *client = (CLIENT_T *)arg;
 
@@ -106,6 +76,73 @@ static void *client_receiver(void *arg) {
 	}
 
 	should_exit = 1;
+	return NULL;
+}
+
+/// @brief recv network packets from the os to client
+/// @param *arg
+static void *client_udp_receiver(void *arg) {
+	CLIENT_T *client = (CLIENT_T *)arg;
+	uint8_t *buffer = malloc(65536);
+	if (buffer == NULL) {
+		log_msg(ERROR_MSG, CLIENT_RT, "Failed to allocate UDP receive buffer");
+		return NULL;
+	}
+
+	while (client->session.state == SESSION_ESTABLISHED && client->session.udp.socket >= 0) {
+		fd_set readfds;
+		FD_ZERO(&readfds);
+		FD_SET(client->session.udp.socket, &readfds);
+		struct timeval timeout = {.tv_sec = 1, .tv_usec = 0};
+
+		int ready = select(client->session.udp.socket + 1, &readfds, NULL, NULL, &timeout);
+
+		if (client->session.state != SESSION_ESTABLISHED || client->session.udp.socket < 0)
+			break;
+		if (ready <= 0)
+			continue;
+
+		ssize_t received = recv(client->session.udp.socket, buffer, 65536, 0);
+		if (received < (ssize_t)sizeof(uint64_t))
+			continue;
+	}
+
+	free(buffer);
+	return NULL;
+}
+
+/// @brief thread for connecting and authenticating to the server
+/// @param *arg
+/// @param *ip
+/// @param port
+static void *client_listener(void *arg) {
+	CLIENT_THREAD_DATA *data = (CLIENT_THREAD_DATA *)arg;
+	if (connection_connect(&data->client->connection, data->ip, data->port) == 0) {
+		unsigned char trusted_key[CRYPTO_PUBLIC_KEY_SIZE];
+		char path[PATH_MAX];
+		int has_trusted = (crypto_config_path("server_trusted.key", path, sizeof(path)) == 0 &&
+				crypto_trust_key_load(path, trusted_key) == 0);
+
+		session_create(
+				&data->client->session,
+				SESSION_CLIENT,
+				data->client->connection.socket,
+				data->ip,
+				&data->client->identity,
+				has_trusted ? trusted_key : NULL);
+
+		if (session_client_connect(&data->client->session) == 0) {
+			if (udp_tunnel_client_open(&data->client->session.udp, data->ip, data->port) == 0) {
+				pthread_t udp_receiver;
+				pthread_create(&udp_receiver, NULL, client_udp_receiver, data->client);
+				pthread_detach(udp_receiver);
+			}
+		}
+	} else {
+		log_msg(ERROR_MSG, CLIENT_RT, "Connection Failed");
+		data->connection_status = 1;
+	}
+
 	return NULL;
 }
 
