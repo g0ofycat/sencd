@@ -20,17 +20,17 @@
 //--============
 
 typedef struct {
-	struct sockaddr_in peer_addr;
 	uint64_t session_id;
 	int socket;
 	uint8_t peer_known;
+	struct sockaddr_in peer_addr;
 } UDP_TUNNEL_T;
 
 //--============
 // -- DEFINITIONS
 //--============
 
-/// @brief initalize UDP tunnel for current session ID
+/// @brief initialize UDP tunnel for the current session ID
 /// @param *tunnel
 /// @param session_id
 void udp_tunnel_init(UDP_TUNNEL_T *tunnel, uint64_t session_id);

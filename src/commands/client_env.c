@@ -61,10 +61,10 @@ static void *client_receiver(void *arg) {
 		}
 
 		if (packet.header.type == PACKET_DISCONNECT) {
-			packet_destroy(&packet);
-			log_msg(WARN_MSG, CLIENT_RT, "Server closed the connection");
-			break;
-		}
+		packet_destroy(&packet);
+		log_msg(WARN_MSG, CLIENT_RT, "Server closed the connection");
+		break;
+	}
 
 		packet_destroy(&packet);
 	}
@@ -120,8 +120,8 @@ static void *client_listener(void *arg) {
 	if (connection_connect(&data->client->connection, data->ip, data->port) == 0) {
 		unsigned char trusted_key[CRYPTO_PUBLIC_KEY_SIZE];
 		char path[PATH_MAX];
-		int has_trusted = (crypto_config_path("server_trusted.key", path, sizeof(path)) == 0 &&
-				crypto_trust_key_load(path, trusted_key) == 0);
+		int has_trusted = crypto_config_path("server_trusted.key", path, sizeof(path)) == 0 &&
+			crypto_trust_key_load(path, trusted_key) == 0;
 
 		session_create(
 				&data->client->session,

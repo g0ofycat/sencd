@@ -49,9 +49,9 @@ typedef struct {
 	CLIENT_T *client;
 	char **argv;
 	const char *ip;
+	uint16_t port;
 	int argc;
 	int connection_status;
-	uint16_t port;
 } CLIENT_THREAD_DATA;
 
 //--============
