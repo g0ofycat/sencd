@@ -21,9 +21,29 @@ Every server reroutes packets differently, either through configuration files or
 
 ### Ubuntu Server
 
-1. Create a subnet (Optional) and ensure you IP is publically accessable using a port forwarding software like *ngrok*.
+1. Expose your server to the public internet. Your sencd server needs to be reachable from wherever your client is. If you don't have a static public IP or port-forwarding access on your router, use a tunneling service like *ngrok* to expose both the TCP control port (default `8080`) and the UDP tunnel port (same port number, UDP)
 
-2. Allow for connections on your ubuntu server by changing the network rules
+2. Enable IP forwarding on the server. This tells the Linux kernel to actually forward packets between network interfaces, rather than only handling traffic addressed to itself:
+
+```
+sudo sysctl -w net.ipv4.ip_forward=1
+```
+
+To make this persist across reboots, add `net.ipv4.ip_forward=1` to `/etc/sysctl.conf` and run `sudo sysctl -p`
+
+3. Set up NAT so tunneled traffic can reach the real internet. sencd creates a virtual network interface named `sencd0` on the server, assigned an address on the `10.8.0.0/24` subnet. Packets arriving on it need to be translated (NAT'd) out through your server's real internet-facing interface. Check yours with `ip a` - it's commonly `eth0`, but modern Ubuntu installs often use predictable names like `enp0s3` instead
+
+```
+sudo iptables -t nat -A POSTROUTING -o <your-interface> -j MASQUERADE
+sudo iptables -A FORWARD -i sencd0 -o <your-interface> -j ACCEPT
+sudo iptables -A FORWARD -i <your-interface> -o sencd0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+```
+
+To persist these rules across reboots, install `iptables-persistent` (`sudo apt install iptables-persistent`) and save with `sudo netfilter-persistent save`
+
+4. Note your subnet. sencd assigns your server and connected clients addresses on a private virtual subnet (default `10.8.0.0/24`) so tunneled traffic can be routed between them. You don't need to configure this manually - sencd handles interface and address assignment automatically when the tunnel starts
+
+---
 
 ## Client Support
 
