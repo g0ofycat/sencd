@@ -8,6 +8,15 @@ find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(SODIUM REQUIRED libsodium)
 pkg_check_modules(CJSON REQUIRED libcjson)
+pkg_check_modules(ZSTD REQUIRED libzstd)
+
+if (WIN32)
+	set(PLATFORM_SOURCES src/platform/windows/tun.c)
+	set(PLATFORM_INCLUDE_DIR src/platform/windows)
+else()
+	set(PLATFORM_SOURCES src/platform/linux/tun.c)
+	set(PLATFORM_INCLUDE_DIR src/platform/linux)
+endif()
 
 add_executable(sencd-client
 	main/client.c
@@ -22,6 +31,7 @@ add_executable(sencd-client
 	src/sessions/session_manager.c
 	src/tunnel/udp_tunnel.c
 	src/tunnel/tunnel_packet.c
+	${PLATFORM_SOURCES}
 )
 
 target_include_directories(sencd-client PRIVATE
@@ -34,12 +44,14 @@ target_include_directories(sencd-client PRIVATE
 	src/shared/security
 	src/sessions
 	src/tunnel
+	${PLATFORM_INCLUDE_DIR}
 	${SODIUM_INCLUDE_DIRS}
 	${CJSON_INCLUDE_DIRS}
+	${ZSTD_INCLUDE_DIRS}
 )
 
-target_link_directories(sencd-client PRIVATE ${SODIUM_LIBRARY_DIRS} ${CJSON_LIBRARY_DIRS})
-target_link_libraries(sencd-client PRIVATE ${SODIUM_LIBRARIES} ${CJSON_LIBRARIES})
+target_link_directories(sencd-client PRIVATE ${SODIUM_LIBRARY_DIRS} ${CJSON_LIBRARY_DIRS} ${ZSTD_LIBRARY_DIRS})
+target_link_libraries(sencd-client PRIVATE ${SODIUM_LIBRARIES} ${CJSON_LIBRARIES} ${ZSTD_LIBRARIES})
 
 add_executable(sencd-server
 	main/server.c
@@ -54,6 +66,7 @@ add_executable(sencd-server
 	src/sessions/session_manager.c
 	src/tunnel/udp_tunnel.c
 	src/tunnel/tunnel_packet.c
+	${PLATFORM_SOURCES}
 )
 
 target_include_directories(sencd-server PRIVATE
@@ -66,9 +79,11 @@ target_include_directories(sencd-server PRIVATE
 	src/shared/security
 	src/sessions
 	src/tunnel
+	${PLATFORM_INCLUDE_DIR}
 	${SODIUM_INCLUDE_DIRS}
 	${CJSON_INCLUDE_DIRS}
+	${ZSTD_INCLUDE_DIRS}
 )
 
-target_link_directories(sencd-server PRIVATE ${SODIUM_LIBRARY_DIRS} ${CJSON_LIBRARY_DIRS})
-target_link_libraries(sencd-server PRIVATE ${SODIUM_LIBRARIES} ${CJSON_LIBRARIES})
+target_link_directories(sencd-server PRIVATE ${SODIUM_LIBRARY_DIRS} ${CJSON_LIBRARY_DIRS} ${ZSTD_LIBRARY_DIRS})
+target_link_libraries(sencd-server PRIVATE ${SODIUM_LIBRARIES} ${CJSON_LIBRARIES} ${ZSTD_LIBRARIES})

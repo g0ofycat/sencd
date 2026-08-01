@@ -1,8 +1,5 @@
 #include "tunnel_packet.h"
 
-#include <string.h>
-#include <endian.h>
-
 //--============
 // -- LOGIC
 //--============

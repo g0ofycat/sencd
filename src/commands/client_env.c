@@ -133,6 +133,7 @@ static void *client_listener(void *arg) {
 
 		if (session_client_connect(&data->client->session) == 0) {
 			if (udp_tunnel_client_open(&data->client->session.udp, data->ip, data->port) == 0) {
+				log_msg(SUCCESS_MSG, CLIENT_RT, "Secure session created, now starting UDP tunnel...");
 				pthread_t udp_receiver;
 				pthread_create(&udp_receiver, NULL, client_udp_receiver, data->client);
 				pthread_detach(udp_receiver);

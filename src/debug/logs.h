@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../server/serverinit/idle.h"
+
 //--============
 // -- CONFIG
 //--============
