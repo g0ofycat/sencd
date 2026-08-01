@@ -123,6 +123,14 @@ TUN_DEVICE_T *tun_open(const TUN_CONFIG_T *config) {
 	return dev;
 }
 
+ssize_t tun_read(TUN_DEVICE_T *dev, uint8_t *buffer, size_t buffer_size) {
+	return read(dev->fd, buffer, buffer_size);
+}
+
+ssize_t tun_write(TUN_DEVICE_T *dev, const uint8_t *buffer, size_t length) {
+	return write(dev->fd, buffer, length);
+}
+
 void tun_close(TUN_DEVICE_T *dev) {
 	if (dev == NULL)
 		return;

@@ -61,10 +61,10 @@ static void *client_receiver(void *arg) {
 		}
 
 		if (packet.header.type == PACKET_DISCONNECT) {
-		packet_destroy(&packet);
-		log_msg(WARN_MSG, CLIENT_RT, "Server closed the connection");
-		break;
-	}
+			packet_destroy(&packet);
+			log_msg(WARN_MSG, CLIENT_RT, "Server closed the connection");
+			break;
+		}
 
 		packet_destroy(&packet);
 	}
@@ -82,12 +82,16 @@ static void *client_receiver(void *arg) {
 /// @brief recv network packets from the os to client
 /// @param *arg
 static void *client_udp_receiver(void *arg) {
-	CLIENT_T *client = (CLIENT_T *)arg;
-	uint8_t *buffer = malloc(65536);
-	if (buffer == NULL) {
-		log_msg(ERROR_MSG, CLIENT_RT, "Failed to allocate UDP receive buffer");
+	uint8_t *buffer = malloc(TUNNEL_PACKET_MAX_SIZE);
+	uint8_t *plaintext = malloc(TUNNEL_PACKET_MAX_SIZE);
+	if (buffer == NULL || plaintext == NULL) {
+		log_msg(ERROR_MSG, CLIENT_RT, "Failed to allocate UDP receive buffers");
+		free(buffer);
+		free(plaintext);
 		return NULL;
 	}
+
+	CLIENT_T *client = (CLIENT_T *)arg;
 
 	while (client->session.state == SESSION_ESTABLISHED && client->session.udp.socket >= 0) {
 		fd_set readfds;
@@ -102,12 +106,22 @@ static void *client_udp_receiver(void *arg) {
 		if (ready <= 0)
 			continue;
 
-		ssize_t received = recv(client->session.udp.socket, buffer, 65536, 0);
-		if (received < (ssize_t)sizeof(uint64_t))
+		ssize_t received = recv(client->session.udp.socket, buffer, TUNNEL_PACKET_MAX_SIZE, 0);
+		if (received <= 0)
 			continue;
+
+		unsigned long long plaintext_len = 0;
+		if (tunnel_packet_decode(buffer, (size_t)received, &client->session.crypto,
+					plaintext, &plaintext_len) != 0)
+			continue;
+
+		if (client->tun != NULL) {
+			tun_write(client->tun, plaintext, (size_t)plaintext_len);
+		}
 	}
 
 	free(buffer);
+	free(plaintext);
 	return NULL;
 }
 
@@ -181,6 +195,13 @@ void start_client_environment(int argc, char *argv[]) {
 
 	if (argc > 3)
 		data.port = (uint16_t)atoi(argv[3]);
+
+	TUN_CONFIG_T tun_config = {.address = CLIENT_DEFAULT_VNI, .netmask = DEFAULT_NETMASK};
+	client.tun = tun_open(&tun_config);
+	if (client.tun == NULL) {
+		log_msg(ERROR_MSG, CLIENT_RT, "Failed to open TUN device");
+		return;
+	}
 
 	pthread_create(&listener, NULL, client_listener, &data);
 	pthread_join(listener, NULL);

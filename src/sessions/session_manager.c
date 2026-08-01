@@ -13,9 +13,13 @@ void session_manager_init(SESSION_MANAGER_T *manager) {
 
 	char path[PATH_MAX];
 	if (crypto_config_path("server_identity.key", path, sizeof(path)) != 0 ||
-			crypto_identity_load_or_create(&manager->identity, path) != 0) {
+			crypto_identity_load_or_create(&manager->identity, path) != 0)
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to load or create server identity");
-	}
+
+	TUN_CONFIG_T tun_config = {.address = SERVER_DEFAULT_VNI, .netmask = DEFAULT_NETMASK};
+	manager->tun = tun_open(&tun_config);
+	if (manager->tun == NULL)
+		log_msg(ERROR_MSG, SERVER_RT, "Failed to open TUN device");
 }
 
 SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager,
@@ -46,11 +50,6 @@ SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager,
 	return session;
 }
 
-int session_manager_disconnect(SESSION_MANAGER_T *manager,
-		uint64_t session_id) {
-	return session_manager_remove(manager, session_id);
-}
-
 void session_manager_disconnect_all(SESSION_MANAGER_T *manager) {
 	pthread_mutex_lock(&manager->lock);
 
@@ -78,6 +77,9 @@ void session_manager_disconnect_all(SESSION_MANAGER_T *manager) {
 
 	manager->session_count = 0;
 	pthread_mutex_unlock(&manager->lock);
+
+	tun_close(manager->tun);
+	manager->tun = NULL;
 }
 
 int session_manager_add(SESSION_MANAGER_T *manager, SESSION_T *session) {
@@ -163,12 +165,16 @@ int session_manager_udp_bind(SESSION_MANAGER_T *manager, uint16_t port) {
 }
 
 void *session_manager_udp_listener(void *arg) {
-	SESSION_MANAGER_T *manager = (SESSION_MANAGER_T *)arg;
-	uint8_t *buffer = malloc(65536);
-	if (buffer == NULL) {
-		log_msg(ERROR_MSG, SERVER_RT, "Failed to allocate UDP receive buffer");
+	uint8_t *buffer = malloc(TUNNEL_PACKET_MAX_SIZE);
+	uint8_t *plaintext = malloc(TUNNEL_PACKET_MAX_SIZE);
+	if (buffer == NULL || plaintext == NULL) {
+		log_msg(ERROR_MSG, SERVER_RT, "Failed to allocate UDP receive buffers");
+		free(buffer);
+		free(plaintext);
 		return NULL;
 	}
+
+	SESSION_MANAGER_T *manager = (SESSION_MANAGER_T *)arg;
 
 	while (manager->udp_socket >= 0) {
 		fd_set readfds;
@@ -186,14 +192,14 @@ void *session_manager_udp_listener(void *arg) {
 		struct sockaddr_in from = {0};
 		socklen_t from_len = sizeof(from);
 
-		ssize_t received = recvfrom(manager->udp_socket, buffer, 65536, 0,
+		ssize_t received = recvfrom(manager->udp_socket, buffer, TUNNEL_PACKET_MAX_SIZE, 0,
 				(struct sockaddr *)&from, &from_len);
-		if (received < (ssize_t)sizeof(uint64_t))
+		if (received <= 0)
 			continue;
 
 		uint64_t session_id;
-		memcpy(&session_id, buffer, sizeof(session_id));
-		session_id = be64toh(session_id);
+		if (tunnel_packet_peek_session_id(buffer, (size_t)received, &session_id) != 0)
+			continue;
 
 		SESSION_T *session = session_manager_get(manager, session_id);
 		if (session == NULL)
@@ -203,9 +209,19 @@ void *session_manager_udp_listener(void *arg) {
 		session->udp.peer_addr = from;
 		session->udp.peer_known = 1;
 		pthread_mutex_unlock(&manager->lock);
+
+		unsigned long long plaintext_len = 0;
+		if (tunnel_packet_decode(buffer, (size_t)received, &session->crypto,
+					plaintext, &plaintext_len) != 0)
+			continue;
+
+		if (manager->tun != NULL) {
+			tun_write(manager->tun, plaintext, (size_t)plaintext_len);
+		}
 	}
 
 	free(buffer);
+	free(plaintext);
 	return NULL;
 }
 

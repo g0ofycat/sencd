@@ -15,11 +15,17 @@
 
 #include "session.h"
 
+#include "../tunnel/tun.h"
+#include "../tunnel/tunnel_packet.h"
+
 //--============
 // -- CONSTS
 //--============
 
 #define MAX_SESSIONS 1024
+
+#define SERVER_DEFAULT_VNI "10.8.0.1"
+#define DEFAULT_NETMASK "255.255.255.0"
 
 //--============
 // -- TYPEDEFS
@@ -27,6 +33,7 @@
 
 typedef struct {
 	SESSION_T *sessions[MAX_SESSIONS];
+	TUN_DEVICE_T *tun;
 	uint32_t session_count;
 	pthread_mutex_t lock;
 	CRYPTO_CONTEXT_T identity;
@@ -50,12 +57,6 @@ void session_manager_init(SESSION_MANAGER_T *manager);
 SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager,
 								   SESSION_ROLE_T role, int socket,
 								   const char *ip);
-
-/// @brief disconnect and remove a session
-/// @param *manager
-/// @param session_id
-/// @return int: success bool
-int session_manager_disconnect(SESSION_MANAGER_T *manager, uint64_t session_id);
 
 /// @brief disconnect all sessions
 /// @param *manager

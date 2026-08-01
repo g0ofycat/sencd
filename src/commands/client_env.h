@@ -17,7 +17,7 @@
 #include "../client/client_core.h"
 #include "../debug/logs.h"
 
-#include "../sessions/session.h"
+#include "../sessions/session_manager.h"
 
 //--============
 // -- CONSTS
@@ -26,6 +26,7 @@
 #define SHELL_PREFIX "sencd-client > "
 
 #define CLIENT_DEFAULT_IP "127.0.0.1"
+#define CLIENT_DEFAULT_VNI "10.8.0.2"
 
 //--============
 // -- TYPEDEFS
@@ -40,6 +41,7 @@ typedef struct {
 } CLIENT_COMMAND;
 
 typedef struct {
+	TUN_DEVICE_T *tun;
 	CONNECTION_T connection;
 	SESSION_T session;
 	CRYPTO_CONTEXT_T identity;
