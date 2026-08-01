@@ -162,5 +162,4 @@ void start_server_environment(int argc, char *argv[]) {
 
 	session_manager_disconnect_all(&session_manager);
 	pthread_mutex_destroy(&session_manager.lock);
-	session_manager_destroy(&session_manager);
 }

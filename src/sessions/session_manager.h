@@ -61,10 +61,6 @@ int session_manager_disconnect(SESSION_MANAGER_T *manager, uint64_t session_id);
 /// @param *manager
 void session_manager_disconnect_all(SESSION_MANAGER_T *manager);
 
-/// @brief destroy the session manager and all active sessions
-/// @param *manager
-void session_manager_destroy(SESSION_MANAGER_T *manager);
-
 /// @brief add a session to the manager
 /// @param *manager
 /// @param *session

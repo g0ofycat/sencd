@@ -80,23 +80,6 @@ void session_manager_disconnect_all(SESSION_MANAGER_T *manager) {
 	pthread_mutex_unlock(&manager->lock);
 }
 
-void session_manager_destroy(SESSION_MANAGER_T *manager) {
-	pthread_mutex_lock(&manager->lock);
-
-	for (uint32_t i = 0; i < MAX_SESSIONS; i++) {
-		if (manager->sessions[i] != NULL) {
-			session_destroy(manager->sessions[i]);
-			free(manager->sessions[i]);
-			manager->sessions[i] = NULL;
-		}
-	}
-
-	manager->session_count = 0;
-
-	pthread_mutex_unlock(&manager->lock);
-	pthread_mutex_destroy(&manager->lock);
-}
-
 int session_manager_add(SESSION_MANAGER_T *manager, SESSION_T *session) {
 	pthread_mutex_lock(&manager->lock);
 
