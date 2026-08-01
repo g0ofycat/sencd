@@ -21,6 +21,7 @@ add_executable(sencd-client
 	src/sessions/session.c
 	src/sessions/session_manager.c
 	src/tunnel/udp_tunnel.c
+	src/tunnel/tunnel_packet.c
 )
 
 target_include_directories(sencd-client PRIVATE
@@ -52,6 +53,7 @@ add_executable(sencd-server
 	src/sessions/session.c
 	src/sessions/session_manager.c
 	src/tunnel/udp_tunnel.c
+	src/tunnel/tunnel_packet.c
 )
 
 target_include_directories(sencd-server PRIVATE

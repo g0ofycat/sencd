@@ -183,3 +183,55 @@ int crypto_derive_client_keys(CRYPTO_CONTEXT_T *ctx,
 	}
 	return 0;
 }
+
+//--============
+// -- PACKETS
+//--============
+
+/// @brief build a 12-byte AEAD nonce from an 8-byte counter (4 zero bytes prefix)
+/// @param counter
+/// @param nonce
+static void crypto_build_nonce(uint64_t counter,
+		unsigned char nonce[crypto_aead_chacha20poly1305_ietf_NPUBBYTES]) {
+	memset(nonce, 0, crypto_aead_chacha20poly1305_ietf_NPUBBYTES);
+	uint64_t be_counter = htobe64(counter);
+	memcpy(nonce + (crypto_aead_chacha20poly1305_ietf_NPUBBYTES - sizeof(be_counter)),
+			&be_counter, sizeof(be_counter));
+}
+
+int crypto_encrypt_packet(CRYPTO_CONTEXT_T *ctx, uint64_t counter,
+		const unsigned char *plaintext, size_t plaintext_len,
+		unsigned char *ciphertext_out, unsigned long long *ciphertext_len_out) {
+	unsigned char nonce[crypto_aead_chacha20poly1305_ietf_NPUBBYTES];
+	crypto_build_nonce(counter, nonce);
+
+	if (crypto_aead_chacha20poly1305_ietf_encrypt(
+				ciphertext_out, ciphertext_len_out,
+				plaintext, plaintext_len,
+				NULL, 0,
+				NULL,
+				nonce, ctx->tx_key) != 0) {
+		log_msg(ERROR_MSG, OTHER_RT, "Failed to encrypt tunnel packet");
+		return 1;
+	}
+
+	return 0;
+}
+
+int crypto_decrypt_packet(CRYPTO_CONTEXT_T *ctx, uint64_t counter,
+		const unsigned char *ciphertext, size_t ciphertext_len,
+		unsigned char *plaintext_out, unsigned long long *plaintext_len_out) {
+	unsigned char nonce[crypto_aead_chacha20poly1305_ietf_NPUBBYTES];
+	crypto_build_nonce(counter, nonce);
+
+	if (crypto_aead_chacha20poly1305_ietf_decrypt(
+				plaintext_out, plaintext_len_out,
+				NULL,
+				ciphertext, ciphertext_len,
+				NULL, 0,
+				nonce, ctx->rx_key) != 0) {
+		return 1;
+	}
+
+	return 0;
+}

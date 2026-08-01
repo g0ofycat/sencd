@@ -34,6 +34,8 @@
 #define CRYPTO_SESSION_KEY_SIZE 32
 #define CRYPTO_SIGNATURE_SIZE 64
 
+#define TUNNEL_AEAD_TAG_SIZE crypto_aead_chacha20poly1305_ietf_ABYTES
+
 //--============
 // -- TYPEDEFS
 //--============
@@ -71,7 +73,7 @@ void crypto_generate_nonce(uint8_t *nonce, size_t size);
 
 /// @brief generate a long-term public/private identity key pair
 /// @param *ctx: crypto context to populate
-/// @return int: success status
+/// @return int: success bool
 int crypto_generate_identity(CRYPTO_CONTEXT_T *ctx);
 
 /// @brief sign a message using the context's private key
@@ -79,7 +81,7 @@ int crypto_generate_identity(CRYPTO_CONTEXT_T *ctx);
 /// @param *message: message to sign
 /// @param message_length: length of the message in bytes
 /// @param signature: output buffer (CRYPTO_SIGNATURE_SIZE bytes)
-/// @return int: success status
+/// @return int: success bool
 int crypto_sign_message(CRYPTO_CONTEXT_T *ctx, const unsigned char *message,
 						size_t message_length,
 						unsigned char signature[CRYPTO_SIGNATURE_SIZE]);
@@ -89,7 +91,7 @@ int crypto_sign_message(CRYPTO_CONTEXT_T *ctx, const unsigned char *message,
 /// @param *message: original message
 /// @param message_length: length of the message in bytes
 /// @param signature: signature to verify (CRYPTO_SIGNATURE_SIZE bytes)
-/// @return int: success status
+/// @return int: success bool
 int crypto_verify_message(
 	const unsigned char public_key[CRYPTO_PUBLIC_KEY_SIZE],
 	const unsigned char *message, size_t message_length,
@@ -99,11 +101,11 @@ int crypto_verify_message(
 /// one if none exists
 /// @param *ctx: crypto context to populate
 /// @param *path: file path for the identity key
-/// @return int: success status
+/// @return int: success bool
 int crypto_identity_load_or_create(CRYPTO_CONTEXT_T *ctx, const char *path);
 
 /// @brief save a raw public key to disk
-/// @return int: success status
+/// @return int: success bool
 int crypto_trust_key_save(const char *path,
 						  const unsigned char key[CRYPTO_PUBLIC_KEY_SIZE]);
 
@@ -117,13 +119,13 @@ int crypto_config_path(const char *filename, char *out_path, size_t out_size);
 
 /// @brief generate an ephemeral key-exchange keypair for this session
 /// @param *ctx: crypto context to populate
-/// @return int: success status
+/// @return int: success bool
 int crypto_generate_ephemeral(CRYPTO_CONTEXT_T *ctx);
 
 /// @brief derive session tx/rx keys as the server side of the exchange
 /// @param *ctx: crypto context (own eph keys already generated)
 /// @param client_eph_pub: peer's ephemeral public key
-/// @return int: success status
+/// @return int: success bool
 int crypto_derive_server_keys(
 	CRYPTO_CONTEXT_T *ctx,
 	const unsigned char client_eph_pub[crypto_kx_PUBLICKEYBYTES]);
@@ -131,9 +133,41 @@ int crypto_derive_server_keys(
 /// @brief derive session tx/rx keys as the client side of the exchange
 /// @param *ctx: crypto context (own eph keys already generated)
 /// @param server_eph_pub: peer's ephemeral public key
-/// @return int: success status
+/// @return int: success bool
 int crypto_derive_client_keys(
 	CRYPTO_CONTEXT_T *ctx,
 	const unsigned char server_eph_pub[crypto_kx_PUBLICKEYBYTES]);
+
+//--============
+// -- PACKETS
+//--============
+
+/// @brief encrypt a plaintext buffer for tunnel transport, nonce derived from a
+/// counter
+/// @param *ctx: crypto context holding tx_key
+/// @param counter: monotonic per-direction counter, used to build the AEAD
+/// nonce
+/// @param *plaintext, plaintext_len: data to encrypt
+/// @param *ciphertext_out: output buffer, must be at least plaintext_len +
+/// TUNNEL_AEAD_TAG_SIZE
+/// @param *ciphertext_len_out: actual output length written
+/// @return int: success bool
+int crypto_encrypt_packet(CRYPTO_CONTEXT_T *ctx, uint64_t counter,
+						  const unsigned char *plaintext, size_t plaintext_len,
+						  unsigned char *ciphertext_out,
+						  unsigned long long *ciphertext_len_out);
+
+/// @brief decrypt a tunnel ciphertext buffer, nonce derived from a counter
+/// @param *ctx: crypto context holding rx_key
+/// @param counter: counter received alongside the ciphertext
+/// @param *ciphertext, ciphertext_len: data to decrypt (includes AEAD tag)
+/// @param *plaintext_out: output buffer, must be at least ciphertext_len -
+/// TUNNEL_AEAD_TAG_SIZE
+/// @param *plaintext_len_out: actual output length written
+/// @return int: success bool (fails on tampered/wrong-key data)
+int crypto_decrypt_packet(CRYPTO_CONTEXT_T *ctx, uint64_t counter,
+						  const unsigned char *ciphertext,
+						  size_t ciphertext_len, unsigned char *plaintext_out,
+						  unsigned long long *plaintext_len_out);
 
 #endif
