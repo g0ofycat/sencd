@@ -83,10 +83,12 @@ static void *client_receiver(void *arg) {
 /// @param *arg
 static void *client_tun_sender(void *arg) {
 	uint8_t *raw = malloc(TUNNEL_PACKET_MAX_PLAINTEXT);
+	uint8_t *compressed = malloc(TUNNEL_PACKET_MAX_PLAINTEXT + TUNNEL_COMPRESS_HEADER_SIZE);
 	uint8_t *encoded = malloc(TUNNEL_PACKET_MAX_SIZE);
-	if (raw == NULL || encoded == NULL) {
+	if (raw == NULL || compressed == NULL || encoded == NULL) {
 		log_msg(ERROR_MSG, CLIENT_RT, "Failed to allocate TUN sender buffers");
 		free(raw);
+		free(compressed);
 		free(encoded);
 		return NULL;
 	}
@@ -111,12 +113,16 @@ static void *client_tun_sender(void *arg) {
 		if (received <= 0)
 			continue;
 
+		size_t compressed_len = tunnel_pipeline_compress(raw, (size_t)received, compressed, TUNNEL_PACKET_MAX_PLAINTEXT);
+		if (compressed_len == 0)
+			continue;
+
 		size_t encoded_len = 0;
 		if (tunnel_packet_encode(&(TUNNEL_PACKET_ENCODE_T){
 					.session_id = client->session.session_id,
 					.counter = client->session.crypto.tx_nonce++,
-					.plaintext = raw,
-					.plaintext_len = (size_t)received
+					.plaintext = compressed,
+					.plaintext_len = compressed_len
 					}, &client->session.crypto, encoded, &encoded_len) != 0) {
 			continue;
 		}
@@ -125,6 +131,7 @@ static void *client_tun_sender(void *arg) {
 	}
 
 	free(raw);
+	free(compressed);
 	free(encoded);
 	return NULL;
 }
@@ -134,10 +141,12 @@ static void *client_tun_sender(void *arg) {
 static void *client_udp_receiver(void *arg) {
 	uint8_t *buffer = malloc(TUNNEL_PACKET_MAX_SIZE);
 	uint8_t *plaintext = malloc(TUNNEL_PACKET_MAX_SIZE);
-	if (buffer == NULL || plaintext == NULL) {
+	uint8_t *decompressed = malloc(TUNNEL_PACKET_MAX_PLAINTEXT);
+	if (buffer == NULL || plaintext == NULL || decompressed == NULL) {
 		log_msg(ERROR_MSG, CLIENT_RT, "Failed to allocate UDP receive buffers");
 		free(buffer);
 		free(plaintext);
+		free(decompressed);
 		return NULL;
 	}
 
@@ -165,13 +174,18 @@ static void *client_udp_receiver(void *arg) {
 					plaintext, &plaintext_len) != 0)
 			continue;
 
+		size_t final_len = tunnel_pipeline_decompress(plaintext, (size_t)plaintext_len, decompressed, TUNNEL_PACKET_MAX_PLAINTEXT);
+		if (final_len == 0)
+			continue;
+
 		if (client->tun != NULL) {
-			tun_write(client->tun, plaintext, (size_t)plaintext_len);
+			tun_write(client->tun, decompressed, final_len);
 		}
 	}
 
 	free(buffer);
 	free(plaintext);
+	free(decompressed);
 	return NULL;
 }
 

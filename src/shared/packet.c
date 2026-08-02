@@ -31,10 +31,9 @@ void packet_destroy(PACKET *packet) {
 
 int packet_send(int socket, PACKET *packet) {
 	PACKET_HEADER header = {.payload_length =
-								htonl(packet->header.payload_length),
-							.flags = htons(packet->header.flags),
-							.version = packet->header.version,
-							.type = packet->header.type};
+		htonl(packet->header.payload_length),
+		.version = packet->header.version,
+		.type = packet->header.type};
 
 	if (packet->header.payload_length > MAX_PACKET_SIZE) {
 		log_msg(ERROR_MSG, OTHER_RT,
@@ -49,7 +48,7 @@ int packet_send(int socket, PACKET *packet) {
 
 	if (packet->header.payload_length > 0) {
 		if (send_all(socket, packet->payload, packet->header.payload_length) <
-			0) {
+				0) {
 			log_msg(ERROR_MSG, OTHER_RT,
 					"Failed to send packet payload, aborting...");
 			return 1;
@@ -70,7 +69,6 @@ int packet_receive(int socket, PACKET *packet) {
 	}
 
 	packet->header.payload_length = ntohl(header.payload_length);
-	packet->header.flags = ntohs(header.flags);
 	packet->header.version = header.version;
 	packet->header.type = header.type;
 
@@ -101,7 +99,7 @@ int packet_receive(int socket, PACKET *packet) {
 		}
 
 		if (recv_all(socket, packet->payload, packet->header.payload_length) <
-			0) {
+				0) {
 			log_msg(ERROR_MSG, OTHER_RT,
 					"Failed to receive packet payload, aborting...");
 			packet_destroy(packet);
@@ -119,7 +117,6 @@ PACKET packet_construct(PACKET_CONSTRUCTOR_T data) {
 
 	packet.header.type = data.header_type;
 	packet.header.version = data.header_version;
-	packet.header.flags = data.flags;
 	packet.header.payload_length = data.payload_length;
 
 	if (data.payload_length > 0) {
@@ -160,7 +157,7 @@ static int recv_all(int socket, void *buffer, size_t length) {
 	size_t total_received = 0;
 	while (total_received < length) {
 		ssize_t received = recv(socket, (char *)buffer + total_received,
-								length - total_received, 0);
+				length - total_received, 0);
 
 		if (received <= 0)
 			return -1;

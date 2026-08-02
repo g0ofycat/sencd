@@ -31,6 +31,7 @@ add_executable(sencd-client
 	src/sessions/session_manager.c
 	src/tunnel/udp_tunnel.c
 	src/tunnel/tunnel_packet.c
+	src/tunnel/tunnel_compress.c
 	${PLATFORM_SOURCES}
 )
 
@@ -66,6 +67,7 @@ add_executable(sencd-server
 	src/sessions/session_manager.c
 	src/tunnel/udp_tunnel.c
 	src/tunnel/tunnel_packet.c
+	src/tunnel/tunnel_compress.c
 	${PLATFORM_SOURCES}
 )
 

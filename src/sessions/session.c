@@ -91,7 +91,6 @@ int session_authenticate_server(SESSION_T *session) {
 			(PACKET_CONSTRUCTOR_T){
 			.header_type = PACKET_AUTH_REQUEST,
 			.header_version = session->protocol_version,
-			.flags = PACKET_FLAG_NONE,
 			.payload = (uint8_t *)&challenge,
 			.payload_length = sizeof(AUTH_CHALLENGE_T)
 			}
@@ -277,7 +276,6 @@ int session_authenticate_client(SESSION_T *session) {
 			(PACKET_CONSTRUCTOR_T){
 			.header_type = PACKET_AUTH_RESPONSE,
 			.header_version = session->protocol_version,
-			.flags = PACKET_FLAG_NONE,
 			.payload = (uint8_t *)&response,
 			.payload_length = sizeof(AUTH_RESPONSE_T)
 			}

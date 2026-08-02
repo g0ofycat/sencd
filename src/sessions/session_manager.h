@@ -16,6 +16,7 @@
 #include "session.h"
 
 #include "../tunnel/tun.h"
+#include "../tunnel/tunnel_compress.h"
 #include "../tunnel/tunnel_packet.h"
 
 //--============

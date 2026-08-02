@@ -60,7 +60,6 @@ void session_manager_disconnect_all(SESSION_MANAGER_T *manager) {
 					(PACKET_CONSTRUCTOR_T){
 					.header_type = PACKET_DISCONNECT,
 					.header_version = session->protocol_version,
-					.flags = PACKET_FLAG_NONE,
 					.payload = NULL,
 					.payload_length = 0
 					}
@@ -168,10 +167,12 @@ int session_manager_udp_bind(SESSION_MANAGER_T *manager, uint16_t port) {
 void *session_manager_udp_listener(void *arg) {
 	uint8_t *buffer = malloc(TUNNEL_PACKET_MAX_SIZE);
 	uint8_t *plaintext = malloc(TUNNEL_PACKET_MAX_SIZE);
-	if (buffer == NULL || plaintext == NULL) {
+	uint8_t *decompressed = malloc(TUNNEL_PACKET_MAX_PLAINTEXT);
+	if (buffer == NULL || plaintext == NULL || decompressed == NULL) {
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to allocate UDP receive buffers");
 		free(buffer);
 		free(plaintext);
+		free(decompressed);
 		return NULL;
 	}
 
@@ -216,34 +217,44 @@ void *session_manager_udp_listener(void *arg) {
 					plaintext, &plaintext_len) != 0)
 			continue;
 
+		size_t final_len = tunnel_pipeline_decompress(plaintext, (size_t)plaintext_len, decompressed, TUNNEL_PACKET_MAX_PLAINTEXT);
+		if (final_len == 0)
+			continue;
+
 		if (manager->tun != NULL) {
-			tun_write(manager->tun, plaintext, (size_t)plaintext_len);
+			tun_write(manager->tun, decompressed, final_len);
 		}
 	}
 
 	free(buffer);
 	free(plaintext);
+	free(decompressed);
 	return NULL;
 }
 
 void *session_manager_tun_sender(void *arg) {
 	SESSION_MANAGER_T *manager = (SESSION_MANAGER_T *)arg;
 	if (manager->tun == NULL) {
-		log_msg(ERROR_MSG, SERVER_RT, "TUN device unavailable, tunnel sender thread exiting");
+		force_logs = 1;
+		log_msg(ERROR_MSG, SERVER_RT, "TUN device unavailable, tunnel sender thread exiting. Are you running this command with root privileges?");
+		force_logs = 0;
 		return NULL;
 	}
 
 	uint8_t *raw = malloc(TUNNEL_PACKET_MAX_PLAINTEXT);
+	uint8_t *compressed = malloc(TUNNEL_PACKET_MAX_PLAINTEXT + TUNNEL_COMPRESS_HEADER_SIZE);
 	uint8_t *encoded = malloc(TUNNEL_PACKET_MAX_SIZE);
-	if (raw == NULL || encoded == NULL) {
+	if (raw == NULL || compressed == NULL || encoded == NULL) {
+		force_logs = 1;
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to allocate TUN sender buffers");
+		force_logs = 0;
 		free(raw);
+		free(compressed);
 		free(encoded);
 		return NULL;
 	}
 
 	int tun_fd = tun_get_fd(manager->tun);
-
 	while (manager->udp_socket >= 0) {
 		fd_set readfds;
 		FD_ZERO(&readfds);
@@ -261,8 +272,11 @@ void *session_manager_tun_sender(void *arg) {
 		if (received < 20)
 			continue;
 
-		uint8_t dest_octet = raw[19];
+		size_t compressed_len = tunnel_pipeline_compress(raw, (size_t)received, compressed, TUNNEL_PACKET_MAX_PLAINTEXT);
+		if (compressed_len == 0)
+			continue;
 
+		uint8_t dest_octet = raw[19];
 		pthread_mutex_lock(&manager->lock);
 		SESSION_T *target = NULL;
 		for (uint32_t i = 0; i < MAX_SESSIONS; i++) {
@@ -284,8 +298,8 @@ void *session_manager_tun_sender(void *arg) {
 		int encode_result = tunnel_packet_encode(&(TUNNEL_PACKET_ENCODE_T){
 				.session_id = target->session_id,
 				.counter = target->crypto.tx_nonce++,
-				.plaintext = raw,
-				.plaintext_len = (size_t)received
+				.plaintext = compressed,
+				.plaintext_len = compressed_len
 				}, &target->crypto, encoded, &encoded_len);
 		pthread_mutex_unlock(&manager->lock);
 
@@ -297,6 +311,7 @@ void *session_manager_tun_sender(void *arg) {
 	}
 
 	free(raw);
+	free(compressed);
 	free(encoded);
 	return NULL;
 }

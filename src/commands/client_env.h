@@ -18,6 +18,7 @@
 #include "../debug/logs.h"
 
 #include "../sessions/session_manager.h"
+#include "../tunnel/tunnel_compress.h"
 
 //--============
 // -- CONSTS

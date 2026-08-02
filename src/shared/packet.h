@@ -25,10 +25,6 @@
 
 #define MAX_PACKET_SIZE 0x1000000
 
-#define PACKET_FLAG_NONE 0x0
-#define PACKET_FLAG_ENCRYPTED 0x1
-#define PACKET_FLAG_COMPRESSED 0x2
-
 //--============
 // -- TYPEDEFS
 //--============
@@ -57,7 +53,6 @@ typedef enum {
 
 typedef struct {
 	uint32_t payload_length;
-	uint16_t flags;
 	uint8_t version;
 	uint8_t type;
 } PACKET_HEADER;
@@ -71,7 +66,6 @@ typedef struct {
 	uint8_t *payload;
 	uint32_t payload_length;
 	PACKET_HEADER_T header_type;
-	uint16_t flags;
 	uint8_t header_version;
 } PACKET_CONSTRUCTOR_T;
 
