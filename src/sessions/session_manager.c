@@ -87,6 +87,7 @@ int session_manager_add(SESSION_MANAGER_T *manager, SESSION_T *session) {
 
 	for (uint32_t i = 0; i < MAX_SESSIONS; i++) {
 		if (manager->sessions[i] == NULL) {
+			session->tunnel_ip_octet = (uint8_t)(i + 2);
 			manager->sessions[i] = session;
 			manager->session_count++;
 
@@ -225,3 +226,77 @@ void *session_manager_udp_listener(void *arg) {
 	return NULL;
 }
 
+void *session_manager_tun_sender(void *arg) {
+	SESSION_MANAGER_T *manager = (SESSION_MANAGER_T *)arg;
+	if (manager->tun == NULL) {
+		log_msg(ERROR_MSG, SERVER_RT, "TUN device unavailable, tunnel sender thread exiting");
+		return NULL;
+	}
+
+	uint8_t *raw = malloc(TUNNEL_PACKET_MAX_PLAINTEXT);
+	uint8_t *encoded = malloc(TUNNEL_PACKET_MAX_SIZE);
+	if (raw == NULL || encoded == NULL) {
+		log_msg(ERROR_MSG, SERVER_RT, "Failed to allocate TUN sender buffers");
+		free(raw);
+		free(encoded);
+		return NULL;
+	}
+
+	int tun_fd = tun_get_fd(manager->tun);
+
+	while (manager->udp_socket >= 0) {
+		fd_set readfds;
+		FD_ZERO(&readfds);
+		FD_SET(tun_fd, &readfds);
+		struct timeval timeout = {.tv_sec = 1, .tv_usec = 0};
+
+		int ready = select(tun_fd + 1, &readfds, NULL, NULL, &timeout);
+
+		if (manager->udp_socket < 0)
+			break;
+		if (ready <= 0)
+			continue;
+
+		ssize_t received = tun_read(manager->tun, raw, TUNNEL_PACKET_MAX_PLAINTEXT);
+		if (received < 20)
+			continue;
+
+		uint8_t dest_octet = raw[19];
+
+		pthread_mutex_lock(&manager->lock);
+		SESSION_T *target = NULL;
+		for (uint32_t i = 0; i < MAX_SESSIONS; i++) {
+			SESSION_T *s = manager->sessions[i];
+			if (s != NULL && s->state == SESSION_ESTABLISHED && s->udp.peer_known &&
+					s->tunnel_ip_octet == dest_octet) {
+				target = s;
+				break;
+			}
+		}
+
+		if (target == NULL) {
+			pthread_mutex_unlock(&manager->lock);
+			continue;
+		}
+
+		struct sockaddr_in peer = target->udp.peer_addr;
+		size_t encoded_len = 0;
+		int encode_result = tunnel_packet_encode(&(TUNNEL_PACKET_ENCODE_T){
+				.session_id = target->session_id,
+				.counter = target->crypto.tx_nonce++,
+				.plaintext = raw,
+				.plaintext_len = (size_t)received
+				}, &target->crypto, encoded, &encoded_len);
+		pthread_mutex_unlock(&manager->lock);
+
+		if (encode_result != 0)
+			continue;
+
+		sendto(manager->udp_socket, encoded, encoded_len, 0,
+				(struct sockaddr *)&peer, sizeof(peer));
+	}
+
+	free(raw);
+	free(encoded);
+	return NULL;
+}

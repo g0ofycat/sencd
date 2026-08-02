@@ -54,6 +54,11 @@ ssize_t tun_read(TUN_DEVICE_T *dev, uint8_t *buffer, size_t buffer_size);
 /// @return ssize_t: bytes written, -1 on error
 ssize_t tun_write(TUN_DEVICE_T *dev, const uint8_t *buffer, size_t length);
 
+/// @brief dev->fd
+/// @param *dev
+/// @return int
+int tun_get_fd(TUN_DEVICE_T *dev);
+
 /// @brief close and clean up the TUN device
 /// @param *dev
 void tun_close(TUN_DEVICE_T *dev);

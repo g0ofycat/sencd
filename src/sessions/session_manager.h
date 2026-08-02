@@ -90,4 +90,8 @@ int session_manager_udp_bind(SESSION_MANAGER_T *manager, uint16_t port);
 /// @param *arg
 void *session_manager_udp_listener(void *arg);
 
+/// @brief send packet through the udp tunnel
+/// @param *arg
+void *session_manager_tun_sender(void *arg);
+
 #endif

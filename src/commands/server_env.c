@@ -108,7 +108,6 @@ void start_server_environment(int argc, char *argv[]) {
 	SESSION_MANAGER_T session_manager;
 	session_manager_init(&session_manager);
 
-
 	force_logs = 1;
 	if (session_manager_udp_bind(&session_manager, port) != 0) {
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to start UDP tunnel listener");
@@ -121,6 +120,9 @@ void start_server_environment(int argc, char *argv[]) {
 
 	pthread_t udp_thread;
 	pthread_create(&udp_thread, NULL, session_manager_udp_listener, &session_manager);
+
+	pthread_t tun_sender_thread;
+	pthread_create(&tun_sender_thread, NULL, session_manager_tun_sender, &session_manager);
 
 	SERVER_LISTENER_DATA listener_data = {
 		.server = &server,
@@ -159,6 +161,7 @@ void start_server_environment(int argc, char *argv[]) {
 	close(session_manager.udp_socket);
 	session_manager.udp_socket = -1;
 	pthread_join(udp_thread, NULL);
+	pthread_join(tun_sender_thread, NULL);
 
 	session_manager_disconnect_all(&session_manager);
 	pthread_mutex_destroy(&session_manager.lock);

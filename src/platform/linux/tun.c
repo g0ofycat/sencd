@@ -131,6 +131,10 @@ ssize_t tun_write(TUN_DEVICE_T *dev, const uint8_t *buffer, size_t length) {
 	return write(dev->fd, buffer, length);
 }
 
+int tun_get_fd(TUN_DEVICE_T *dev) {
+	return dev->fd;
+}
+
 void tun_close(TUN_DEVICE_T *dev) {
 	if (dev == NULL)
 		return;

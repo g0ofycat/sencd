@@ -50,6 +50,7 @@ typedef struct {
 	char ip[INET_ADDRSTRLEN];
 	uint8_t has_trusted_peer_key;
 	uint8_t protocol_version;
+	uint8_t tunnel_ip_octet;
 	SESSION_STATE_T state;
 	SESSION_ROLE_T role;
 	int socket;

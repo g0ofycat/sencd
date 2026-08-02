@@ -79,6 +79,56 @@ static void *client_receiver(void *arg) {
 	return NULL;
 }
 
+/// @brief send client packet to server
+/// @param *arg
+static void *client_tun_sender(void *arg) {
+	uint8_t *raw = malloc(TUNNEL_PACKET_MAX_PLAINTEXT);
+	uint8_t *encoded = malloc(TUNNEL_PACKET_MAX_SIZE);
+	if (raw == NULL || encoded == NULL) {
+		log_msg(ERROR_MSG, CLIENT_RT, "Failed to allocate TUN sender buffers");
+		free(raw);
+		free(encoded);
+		return NULL;
+	}
+
+	CLIENT_T *client = (CLIENT_T *)arg;
+	int tun_fd = tun_get_fd(client->tun);
+
+	while (client->session.state == SESSION_ESTABLISHED && client->session.udp.socket >= 0) {
+		fd_set readfds;
+		FD_ZERO(&readfds);
+		FD_SET(tun_fd, &readfds);
+		struct timeval timeout = {.tv_sec = 1, .tv_usec = 0};
+
+		int ready = select(tun_fd + 1, &readfds, NULL, NULL, &timeout);
+
+		if (client->session.state != SESSION_ESTABLISHED || client->session.udp.socket < 0)
+			break;
+		if (ready <= 0)
+			continue;
+
+		ssize_t received = tun_read(client->tun, raw, TUNNEL_PACKET_MAX_PLAINTEXT);
+		if (received <= 0)
+			continue;
+
+		size_t encoded_len = 0;
+		if (tunnel_packet_encode(&(TUNNEL_PACKET_ENCODE_T){
+					.session_id = client->session.session_id,
+					.counter = client->session.crypto.tx_nonce++,
+					.plaintext = raw,
+					.plaintext_len = (size_t)received
+					}, &client->session.crypto, encoded, &encoded_len) != 0) {
+			continue;
+		}
+
+		send(client->session.udp.socket, encoded, encoded_len, 0);
+	}
+
+	free(raw);
+	free(encoded);
+	return NULL;
+}
+
 /// @brief recv network packets from the os to client
 /// @param *arg
 static void *client_udp_receiver(void *arg) {
@@ -148,9 +198,14 @@ static void *client_listener(void *arg) {
 		if (session_client_connect(&data->client->session) == 0) {
 			if (udp_tunnel_client_open(&data->client->session.udp, data->ip, data->port) == 0) {
 				log_msg(SUCCESS_MSG, CLIENT_RT, "Secure session created, now starting UDP tunnel...");
+
 				pthread_t udp_receiver;
 				pthread_create(&udp_receiver, NULL, client_udp_receiver, data->client);
 				pthread_detach(udp_receiver);
+
+				pthread_t tun_sender;
+				pthread_create(&tun_sender, NULL, client_tun_sender, data->client);
+				pthread_detach(tun_sender);
 			}
 		}
 	} else {
