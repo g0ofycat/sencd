@@ -23,14 +23,14 @@ int main(int argc, char *argv[]) {
 				"-    start <argv='SERVER IP': default='127.0.0.1'> <argv='PORT NUMBER': default='8080'> [Start the Server on an optional port]\n"
 				"-    shutdown [Stop the Server, disconnecting all clients if needed]\n"
 				"- MANAGEMENT [ENVIRONMENT ONLY]:\n"
-				"-    idle [Instead of the command output, display all server outputs. To exit, use C-x]\n"
-				"-    list [List all clients connected to the current server]\n"
-				"-    status [Get current diagnostics of the server]\n"
-				"-    kick <argv='client_id'> [Kick a client off the server]\n"
-				"-    ban <argv='client_id'> [Ban a client off the server, kicking them in the process]\n"
-				"-    unban <argv='client_id'> [Unban a client from the server]\n"
-				"-    limit <argv='n': default='inf'> [Limit the server to process a maximum amount of 'n' packages per second]\n"
-				"-    setpwd [Set the administrator password, mainly used for remote control access on the client]\n");
+				"-    idle [Instead of the command output, display all server outputs. To exit, use C-x]\n");
+				// "-    list [List all clients connected to the current server]\n"
+				// "-    status [Get current diagnostics of the server]\n"
+				// "-    kick <argv='client_id'> [Kick a client off the server]\n"
+				// "-    ban <argv='client_id'> [Ban a client off the server, kicking them in the process]\n"
+				// "-    unban <argv='client_id'> [Unban a client from the server]\n"
+				// "-    limit <argv='n': default='inf'> [Limit the server to process a maximum amount of 'n' packages per second]\n"
+				// "-    setpwd [Set the administrator password, mainly used for remote control access on the client]\n");
 	} else if (strcmp(argv[1], "start") == 0) {
 		crypto_init();
 		start_server_environment(argc, argv);

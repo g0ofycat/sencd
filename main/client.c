@@ -22,16 +22,16 @@ int main(int argc, char *argv[]) {
 				"options:\n"
 				"- CORE:\n"
 				"-    connect <argv='IP OF SERVER': default='127.0.0.1'> <argv='PORT NUMBER': default='8080'> [Connect to a target server on its port number]\n"
-				"-    attach [Connect a client environment to a currently running daemon]\n"
-				"-    disconnect [Disconnect from the current server, if any]\n"
-				"- DIAGNOSTICS [ENVIRONMENT ONLY]:\n"
-				"-    status [Get the current status of the server]\n"
-				"-    ping [Ping the server to check availability]\n"
-				"-    info [Display information about the hardware and specifics of the server]\n"
-				"-    stats [Display information based on current server traffic]\n"
-				"- SERVER CONTROL [ENVIRONMENT ONLY]:\n"
-				"-    sout <argv='n'> [Show the last 'n' messages based on the server's output]\n"
-				"-    rcontrol <argv='SERVER PASSWORD SET USING setpwd'> [Remotely control the current server, if any]\n");
+				// "-    attach [Connect a client environment to a currently running daemon]\n"
+				"-    disconnect [Disconnect from the current server, if any]\n");
+				// "- DIAGNOSTICS [ENVIRONMENT ONLY]:\n"
+				// "-    status [Get the current status of the server]\n"
+				// "-    ping [Ping the server to check availability]\n"
+				// "-    info [Display information about the hardware and specifics of the server]\n"
+				// "-    stats [Display information based on current server traffic]\n"
+				// "- SERVER CONTROL [ENVIRONMENT ONLY]:\n"
+				// "-    sout <argv='n'> [Show the last 'n' messages based on the server's output]\n"
+				// "-    rcontrol <argv='SERVER PASSWORD SET USING setpwd'> [Remotely control the current server, if any]\n");
 	} else if (strcmp(argv[1], "connect") == 0) {
 		start_client_environment(argc, argv);
 	} else {
