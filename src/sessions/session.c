@@ -43,9 +43,6 @@ int session_create(SESSION_T *session, SESSION_ROLE_T role, int socket,
 
 	udp_tunnel_init(&session->udp, session->session_id);
 
-	session->created = time(NULL);
-	session->last_seen = session->created;
-
 	session->protocol_version = CURRENT_PROTOCOL_VERSION;
 
 	strncpy(session->ip, ip, sizeof(session->ip) - 1);

@@ -27,7 +27,6 @@
 //--============
 
 typedef struct {
-	uint64_t clients_connected;
 	int socket;
 	int running;
 	uint16_t port;

@@ -90,8 +90,6 @@ int server_accept(SERVER_T *server) {
 		strcpy(client_ip, "<unknown>");
 	}
 
-	server->clients_connected++;
-
 	log_msg(INFO_MSG, SERVER_RT, "Client connected\nAddress: %s\nPort: %u",
 			client_ip, ntohs(client_addr.sin_port));
 

@@ -13,7 +13,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h>
 
 #include "../client/client_core.h"
@@ -42,8 +41,6 @@ typedef struct {
 	CRYPTO_CONTEXT_T crypto;
 	UDP_TUNNEL_T udp;
 	uint64_t session_id;
-	time_t created;
-	time_t last_seen;
 	unsigned char trusted_peer_key[CRYPTO_PUBLIC_KEY_SIZE];
 	uint8_t session_nonce[SESSION_NONCE_SIZE];
 	uint8_t auth_nonce[AUTH_NONCE_SIZE];
