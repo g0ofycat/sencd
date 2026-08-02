@@ -1,4 +1,0 @@
-/home/g0ofycat/projects/sencd/buil/CMakeFiles/sencd-client.dir
-/home/g0ofycat/projects/sencd/buil/CMakeFiles/sencd-server.dir
-/home/g0ofycat/projects/sencd/buil/CMakeFiles/edit_cache.dir
-/home/g0ofycat/projects/sencd/buil/CMakeFiles/rebuild_cache.dir
