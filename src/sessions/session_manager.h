@@ -33,10 +33,10 @@
 
 typedef struct {
 	SESSION_T *sessions[MAX_SESSIONS];
+	CRYPTO_CONTEXT_T identity;
+	pthread_mutex_t lock;
 	TUN_DEVICE_T *tun;
 	uint32_t session_count;
-	pthread_mutex_t lock;
-	CRYPTO_CONTEXT_T identity;
 	int udp_socket;
 } SESSION_MANAGER_T;
 

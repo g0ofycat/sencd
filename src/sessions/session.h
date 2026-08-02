@@ -40,23 +40,19 @@ typedef enum { SESSION_SERVER, SESSION_CLIENT } SESSION_ROLE_T;
 
 typedef struct {
 	CRYPTO_CONTEXT_T crypto;
-	uint64_t session_id;
 	UDP_TUNNEL_T udp;
-
+	uint64_t session_id;
 	time_t created;
 	time_t last_seen;
-
-	uint8_t auth_nonce[AUTH_NONCE_SIZE];
-	uint8_t session_nonce[SESSION_NONCE_SIZE];
 	unsigned char trusted_peer_key[CRYPTO_PUBLIC_KEY_SIZE];
+	uint8_t session_nonce[SESSION_NONCE_SIZE];
+	uint8_t auth_nonce[AUTH_NONCE_SIZE];
+	char ip[INET_ADDRSTRLEN];
 	uint8_t has_trusted_peer_key;
 	uint8_t protocol_version;
-
 	SESSION_STATE_T state;
 	SESSION_ROLE_T role;
 	int socket;
-
-	char ip[INET_ADDRSTRLEN];
 } SESSION_T;
 
 //--============

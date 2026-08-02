@@ -37,17 +37,15 @@ typedef enum {
 } CONNECTION_STATE;
 
 typedef struct {
+	char ip[64];
 	uint64_t packets_sent;
 	uint64_t packets_received;
 	uint64_t bytes_sent;
 	uint64_t bytes_received;
-
 	uint32_t session_id;
 	int socket;
-	uint16_t port;
 	CONNECTION_STATE state;
-
-	char ip[64];
+	uint16_t port;
 } CONNECTION_T;
 
 //--============

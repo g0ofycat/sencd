@@ -63,7 +63,7 @@ int connection_connect(CONNECTION_T *connection, const char *ip,
 	connection->state = CONNECTION_CONNECTED;
 
 	return 0;
-};
+}
 
 int connection_disconnect(CONNECTION_T *connection) {
 	if (connection->state == CONNECTION_DISCONNECTED) {
@@ -119,7 +119,7 @@ static int connection_create_socket(CONNECTION_T *connection) {
 	}
 
 	return 0;
-};
+}
 
 static int connection_open(CONNECTION_T *connection) {
 	struct sockaddr_in server = {0};

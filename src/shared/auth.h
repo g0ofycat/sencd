@@ -37,8 +37,8 @@ typedef struct {
 } AUTH_RESPONSE_T;
 
 typedef struct {
-	uint64_t session_id;
 	uint8_t session_nonce[SESSION_NONCE_SIZE];
+	uint64_t session_id;
 } AUTH_SUCCESS_T;
 
 #endif

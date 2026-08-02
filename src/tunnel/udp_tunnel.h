@@ -21,10 +21,10 @@
 //--============
 
 typedef struct {
+	struct sockaddr_in peer_addr;
 	uint64_t session_id;
 	int socket;
 	uint8_t peer_known;
-	struct sockaddr_in peer_addr;
 } UDP_TUNNEL_T;
 
 //--============

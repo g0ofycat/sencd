@@ -61,7 +61,7 @@ To start the server, you can compile from source using **git clone** (Recommende
 sencd-server start
 ```
 
-This automatically starts the server environment, so by default no output would display apart from the initial server connection messages, this behavior can be overridden by using the **idle** sub-command which puts you into read-only mode while also listening to server output
+This automatically starts the server environment, so by default no output would be displayed apart from the initial server connection messages; this behavior can be overridden by using the **idle** sub-command, which puts you into read-only mode while also listening to server output
 
 ```
 sencd-server > idle

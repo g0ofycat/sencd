@@ -41,17 +41,15 @@
 //--============
 
 typedef struct {
-	uint64_t tx_nonce;
-	uint64_t rx_nonce;
-
-	unsigned char public_key[CRYPTO_PUBLIC_KEY_SIZE];
 	unsigned char private_key[CRYPTO_PRIVATE_KEY_SIZE];
+	unsigned char eph_private_key[crypto_kx_SECRETKEYBYTES];
+	unsigned char public_key[CRYPTO_PUBLIC_KEY_SIZE];
 	unsigned char peer_public_key[CRYPTO_PUBLIC_KEY_SIZE];
 	unsigned char tx_key[CRYPTO_SESSION_KEY_SIZE];
 	unsigned char rx_key[CRYPTO_SESSION_KEY_SIZE];
 	unsigned char eph_public_key[crypto_kx_PUBLICKEYBYTES];
-	unsigned char eph_private_key[crypto_kx_SECRETKEYBYTES];
-
+	uint64_t tx_nonce;
+	uint64_t rx_nonce;
 	uint8_t verified;
 } CRYPTO_CONTEXT_T;
 

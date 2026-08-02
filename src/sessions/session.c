@@ -84,9 +84,8 @@ int session_authenticate_server(SESSION_T *session) {
 	memcpy(sign_buf, challenge.nonce, AUTH_NONCE_SIZE);
 	memcpy(sign_buf + AUTH_NONCE_SIZE, challenge.eph_public_key, crypto_kx_PUBLICKEYBYTES);
 
-	if (crypto_sign_message(&session->crypto, sign_buf, sizeof(sign_buf), challenge.signature) != 0) {
+	if (crypto_sign_message(&session->crypto, sign_buf, sizeof(sign_buf), challenge.signature) != 0)
 		return 1;
-	}
 
 	PACKET packet = packet_construct(
 			(PACKET_CONSTRUCTOR_T){
@@ -271,9 +270,8 @@ int session_authenticate_client(SESSION_T *session) {
 	memcpy(resp_sign_buf, challenge.nonce, AUTH_NONCE_SIZE);
 	memcpy(resp_sign_buf + AUTH_NONCE_SIZE, response.eph_public_key, crypto_kx_PUBLICKEYBYTES);
 
-	if (crypto_sign_message(&session->crypto, resp_sign_buf, sizeof(resp_sign_buf), response.signature) != 0) {
+	if (crypto_sign_message(&session->crypto, resp_sign_buf, sizeof(resp_sign_buf), response.signature) != 0)
 		return 1;
-	}
 
 	PACKET reply = packet_construct(
 			(PACKET_CONSTRUCTOR_T){
@@ -409,9 +407,8 @@ int session_verify_client(SESSION_T *session) {
 	memcpy(verify_buf, session->auth_nonce, AUTH_NONCE_SIZE);
 	memcpy(verify_buf + AUTH_NONCE_SIZE, response.eph_public_key, crypto_kx_PUBLICKEYBYTES);
 
-	if (crypto_verify_message(response.public_key, verify_buf, sizeof(verify_buf), response.signature)) {
+	if (crypto_verify_message(response.public_key, verify_buf, sizeof(verify_buf), response.signature))
 		return 1;
-	}
 
 	if (crypto_derive_server_keys(&session->crypto, response.eph_public_key) != 0) {
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to derive session keys");

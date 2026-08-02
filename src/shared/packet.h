@@ -56,10 +56,10 @@ typedef enum {
 } PACKET_HEADER_T;
 
 typedef struct {
+	uint32_t payload_length;
+	uint16_t flags;
 	uint8_t version;
 	uint8_t type;
-	uint16_t flags;
-	uint32_t payload_length;
 } PACKET_HEADER;
 
 typedef struct {
@@ -69,10 +69,10 @@ typedef struct {
 
 typedef struct {
 	uint8_t *payload;
-	PACKET_HEADER_T header_type;
-	uint8_t header_version;
-	uint16_t flags;
 	uint32_t payload_length;
+	PACKET_HEADER_T header_type;
+	uint16_t flags;
+	uint8_t header_version;
 } PACKET_CONSTRUCTOR_T;
 
 //--============

@@ -147,9 +147,8 @@ static int send_all(int socket, const void *buffer, size_t length) {
 		ssize_t sent =
 			send(socket, (char *)buffer + total_sent, length - total_sent, 0);
 
-		if (sent <= 0) {
+		if (sent <= 0)
 			return -1;
-		}
 
 		total_sent += sent;
 	}
@@ -163,9 +162,8 @@ static int recv_all(int socket, void *buffer, size_t length) {
 		ssize_t received = recv(socket, (char *)buffer + total_received,
 								length - total_received, 0);
 
-		if (received <= 0) {
+		if (received <= 0)
 			return -1;
-		}
 
 		total_received += received;
 	}

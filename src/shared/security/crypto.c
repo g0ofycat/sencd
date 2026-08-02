@@ -104,9 +104,8 @@ int crypto_identity_load_or_create(CRYPTO_CONTEXT_T *ctx, const char *path) {
 
 int crypto_trust_key_load(const char *path, unsigned char out_key[CRYPTO_PUBLIC_KEY_SIZE]) {
 	FILE *f = fopen(path, "rb");
-	if (f == NULL) {
+	if (f == NULL)
 		return 1;
-	}
 
 	size_t read_bytes = fread(out_key, 1, CRYPTO_PUBLIC_KEY_SIZE, f);
 	fclose(f);

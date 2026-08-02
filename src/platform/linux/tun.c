@@ -23,8 +23,8 @@
 //--============
 
 struct TUN_DEVICE {
-	int fd;
 	char name[IFNAMSIZ];
+	int fd;
 };
 
 static int tun_assign_address(const char *ifname, const TUN_CONFIG_T *config) {
