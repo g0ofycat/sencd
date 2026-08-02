@@ -4,7 +4,7 @@
 // -- LOGIC
 //--============
 
-void session_manager_init(SESSION_MANAGER_T *manager) {
+int session_manager_init(SESSION_MANAGER_T *manager) {
 	memset(manager->sessions, 0, sizeof(manager->sessions));
 	manager->session_count = 0;
 	pthread_mutex_init(&manager->lock, NULL);
@@ -13,13 +13,19 @@ void session_manager_init(SESSION_MANAGER_T *manager) {
 
 	char path[PATH_MAX];
 	if (crypto_config_path("server_identity.key", path, sizeof(path)) != 0 ||
-			crypto_identity_load_or_create(&manager->identity, path) != 0)
+			crypto_identity_load_or_create(&manager->identity, path) != 0) {
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to load or create server identity");
+		return 1;
+	}
 
-	TUN_CONFIG_T tun_config = {.address = SERVER_DEFAULT_VNI, .netmask = DEFAULT_NETMASK};
+	TUN_CONFIG_T tun_config = {.address = SERVER_DEFAULT_VNI, .netmask = DEFAULT_NETMASK, .ifname = SERVER_TUN_INTERFACE_NAME};
 	manager->tun = tun_open(&tun_config);
-	if (manager->tun == NULL)
-		log_msg(ERROR_MSG, SERVER_RT, "Failed to open TUN device");
+	if (manager->tun == NULL) {
+		log_msg(ERROR_MSG, SERVER_RT, "Failed to open TUN device. Are you running with root privileges?");
+		return 1;
+	}
+
+	return 0;
 }
 
 SESSION_T *session_manager_connect(SESSION_MANAGER_T *manager,

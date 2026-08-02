@@ -1,0 +1,170 @@
+[
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/main/client.c.o -c /home/g0ofycat/projects/sencd/main/client.c",
+  "file": "/home/g0ofycat/projects/sencd/main/client.c",
+  "output": "CMakeFiles/sencd-client.dir/main/client.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/debug/logs.c.o -c /home/g0ofycat/projects/sencd/src/debug/logs.c",
+  "file": "/home/g0ofycat/projects/sencd/src/debug/logs.c",
+  "output": "CMakeFiles/sencd-client.dir/src/debug/logs.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/server/serverinit/idle.c.o -c /home/g0ofycat/projects/sencd/src/server/serverinit/idle.c",
+  "file": "/home/g0ofycat/projects/sencd/src/server/serverinit/idle.c",
+  "output": "CMakeFiles/sencd-client.dir/src/server/serverinit/idle.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/commands/client_env.c.o -c /home/g0ofycat/projects/sencd/src/commands/client_env.c",
+  "file": "/home/g0ofycat/projects/sencd/src/commands/client_env.c",
+  "output": "CMakeFiles/sencd-client.dir/src/commands/client_env.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/commands/utility/clear.c.o -c /home/g0ofycat/projects/sencd/src/commands/utility/clear.c",
+  "file": "/home/g0ofycat/projects/sencd/src/commands/utility/clear.c",
+  "output": "CMakeFiles/sencd-client.dir/src/commands/utility/clear.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/client/client_core.c.o -c /home/g0ofycat/projects/sencd/src/client/client_core.c",
+  "file": "/home/g0ofycat/projects/sencd/src/client/client_core.c",
+  "output": "CMakeFiles/sencd-client.dir/src/client/client_core.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/shared/packet.c.o -c /home/g0ofycat/projects/sencd/src/shared/packet.c",
+  "file": "/home/g0ofycat/projects/sencd/src/shared/packet.c",
+  "output": "CMakeFiles/sencd-client.dir/src/shared/packet.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/shared/security/crypto.c.o -c /home/g0ofycat/projects/sencd/src/shared/security/crypto.c",
+  "file": "/home/g0ofycat/projects/sencd/src/shared/security/crypto.c",
+  "output": "CMakeFiles/sencd-client.dir/src/shared/security/crypto.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/sessions/session.c.o -c /home/g0ofycat/projects/sencd/src/sessions/session.c",
+  "file": "/home/g0ofycat/projects/sencd/src/sessions/session.c",
+  "output": "CMakeFiles/sencd-client.dir/src/sessions/session.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/sessions/session_manager.c.o -c /home/g0ofycat/projects/sencd/src/sessions/session_manager.c",
+  "file": "/home/g0ofycat/projects/sencd/src/sessions/session_manager.c",
+  "output": "CMakeFiles/sencd-client.dir/src/sessions/session_manager.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/tunnel/udp_tunnel.c.o -c /home/g0ofycat/projects/sencd/src/tunnel/udp_tunnel.c",
+  "file": "/home/g0ofycat/projects/sencd/src/tunnel/udp_tunnel.c",
+  "output": "CMakeFiles/sencd-client.dir/src/tunnel/udp_tunnel.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/tunnel/tunnel_packet.c.o -c /home/g0ofycat/projects/sencd/src/tunnel/tunnel_packet.c",
+  "file": "/home/g0ofycat/projects/sencd/src/tunnel/tunnel_packet.c",
+  "output": "CMakeFiles/sencd-client.dir/src/tunnel/tunnel_packet.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/tunnel/tunnel_compress.c.o -c /home/g0ofycat/projects/sencd/src/tunnel/tunnel_compress.c",
+  "file": "/home/g0ofycat/projects/sencd/src/tunnel/tunnel_compress.c",
+  "output": "CMakeFiles/sencd-client.dir/src/tunnel/tunnel_compress.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/client -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-client.dir/src/platform/linux/tun.c.o -c /home/g0ofycat/projects/sencd/src/platform/linux/tun.c",
+  "file": "/home/g0ofycat/projects/sencd/src/platform/linux/tun.c",
+  "output": "CMakeFiles/sencd-client.dir/src/platform/linux/tun.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/main/server.c.o -c /home/g0ofycat/projects/sencd/main/server.c",
+  "file": "/home/g0ofycat/projects/sencd/main/server.c",
+  "output": "CMakeFiles/sencd-server.dir/main/server.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/debug/logs.c.o -c /home/g0ofycat/projects/sencd/src/debug/logs.c",
+  "file": "/home/g0ofycat/projects/sencd/src/debug/logs.c",
+  "output": "CMakeFiles/sencd-server.dir/src/debug/logs.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/server/server_core.c.o -c /home/g0ofycat/projects/sencd/src/server/server_core.c",
+  "file": "/home/g0ofycat/projects/sencd/src/server/server_core.c",
+  "output": "CMakeFiles/sencd-server.dir/src/server/server_core.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/server/serverinit/idle.c.o -c /home/g0ofycat/projects/sencd/src/server/serverinit/idle.c",
+  "file": "/home/g0ofycat/projects/sencd/src/server/serverinit/idle.c",
+  "output": "CMakeFiles/sencd-server.dir/src/server/serverinit/idle.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/commands/server_env.c.o -c /home/g0ofycat/projects/sencd/src/commands/server_env.c",
+  "file": "/home/g0ofycat/projects/sencd/src/commands/server_env.c",
+  "output": "CMakeFiles/sencd-server.dir/src/commands/server_env.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/commands/utility/clear.c.o -c /home/g0ofycat/projects/sencd/src/commands/utility/clear.c",
+  "file": "/home/g0ofycat/projects/sencd/src/commands/utility/clear.c",
+  "output": "CMakeFiles/sencd-server.dir/src/commands/utility/clear.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/shared/packet.c.o -c /home/g0ofycat/projects/sencd/src/shared/packet.c",
+  "file": "/home/g0ofycat/projects/sencd/src/shared/packet.c",
+  "output": "CMakeFiles/sencd-server.dir/src/shared/packet.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/shared/security/crypto.c.o -c /home/g0ofycat/projects/sencd/src/shared/security/crypto.c",
+  "file": "/home/g0ofycat/projects/sencd/src/shared/security/crypto.c",
+  "output": "CMakeFiles/sencd-server.dir/src/shared/security/crypto.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/sessions/session.c.o -c /home/g0ofycat/projects/sencd/src/sessions/session.c",
+  "file": "/home/g0ofycat/projects/sencd/src/sessions/session.c",
+  "output": "CMakeFiles/sencd-server.dir/src/sessions/session.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/sessions/session_manager.c.o -c /home/g0ofycat/projects/sencd/src/sessions/session_manager.c",
+  "file": "/home/g0ofycat/projects/sencd/src/sessions/session_manager.c",
+  "output": "CMakeFiles/sencd-server.dir/src/sessions/session_manager.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/tunnel/udp_tunnel.c.o -c /home/g0ofycat/projects/sencd/src/tunnel/udp_tunnel.c",
+  "file": "/home/g0ofycat/projects/sencd/src/tunnel/udp_tunnel.c",
+  "output": "CMakeFiles/sencd-server.dir/src/tunnel/udp_tunnel.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/tunnel/tunnel_packet.c.o -c /home/g0ofycat/projects/sencd/src/tunnel/tunnel_packet.c",
+  "file": "/home/g0ofycat/projects/sencd/src/tunnel/tunnel_packet.c",
+  "output": "CMakeFiles/sencd-server.dir/src/tunnel/tunnel_packet.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/tunnel/tunnel_compress.c.o -c /home/g0ofycat/projects/sencd/src/tunnel/tunnel_compress.c",
+  "file": "/home/g0ofycat/projects/sencd/src/tunnel/tunnel_compress.c",
+  "output": "CMakeFiles/sencd-server.dir/src/tunnel/tunnel_compress.c.o"
+},
+{
+  "directory": "/home/g0ofycat/projects/sencd/buil",
+  "command": "/usr/bin/gcc  -I/home/g0ofycat/projects/sencd/src/debug -I/home/g0ofycat/projects/sencd/src/server -I/home/g0ofycat/projects/sencd/src/server/serverinit -I/home/g0ofycat/projects/sencd/src/commands -I/home/g0ofycat/projects/sencd/src/commands/utility -I/home/g0ofycat/projects/sencd/src/shared -I/home/g0ofycat/projects/sencd/src/shared/security -I/home/g0ofycat/projects/sencd/src/sessions -I/home/g0ofycat/projects/sencd/src/tunnel -I/home/g0ofycat/projects/sencd/src/platform/linux -I/usr/include/cjson -std=gnu11 -o CMakeFiles/sencd-server.dir/src/platform/linux/tun.c.o -c /home/g0ofycat/projects/sencd/src/platform/linux/tun.c",
+  "file": "/home/g0ofycat/projects/sencd/src/platform/linux/tun.c",
+  "output": "CMakeFiles/sencd-server.dir/src/platform/linux/tun.c.o"
+}
+]

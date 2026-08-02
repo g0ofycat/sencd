@@ -95,7 +95,7 @@ TUN_DEVICE_T *tun_open(const TUN_CONFIG_T *config) {
 	struct ifreq ifr;
 	memset(&ifr, 0, sizeof(ifr));
 	ifr.ifr_flags = IFF_TUN | IFF_NO_PI;
-	strncpy(ifr.ifr_name, TUN_INTERFACE_NAME, IFNAMSIZ - 1);
+	strncpy(ifr.ifr_name, config->ifname, IFNAMSIZ - 1);
 
 	if (ioctl(fd, TUNSETIFF, &ifr) < 0) {
 		log_msg(ERROR_MSG, OTHER_RT, "Failed to create TUN interface");

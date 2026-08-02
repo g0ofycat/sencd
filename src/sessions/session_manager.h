@@ -47,7 +47,8 @@ typedef struct {
 
 /// @brief initialize the session manager
 /// @param *manager
-void session_manager_init(SESSION_MANAGER_T *manager);
+/// @return int: success bool
+int session_manager_init(SESSION_MANAGER_T *manager);
 
 /// @brief create, handshake, and add a session
 /// @param *manager

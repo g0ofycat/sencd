@@ -210,9 +210,9 @@ static void *client_listener(void *arg) {
 				has_trusted ? trusted_key : NULL);
 
 		if (session_client_connect(&data->client->session) == 0) {
-			if (udp_tunnel_client_open(&data->client->session.udp, data->ip, data->port) == 0) {
-				log_msg(SUCCESS_MSG, CLIENT_RT, "Secure session created, now starting UDP tunnel...");
+			log_msg(SUCCESS_MSG, CLIENT_RT, "Secure session created, now starting UDP tunnel...");
 
+			if (udp_tunnel_client_open(&data->client->session.udp, data->ip, data->port) == 0) {
 				pthread_t udp_receiver;
 				pthread_create(&udp_receiver, NULL, client_udp_receiver, data->client);
 				pthread_detach(udp_receiver);
@@ -220,7 +220,13 @@ static void *client_listener(void *arg) {
 				pthread_t tun_sender;
 				pthread_create(&tun_sender, NULL, client_tun_sender, data->client);
 				pthread_detach(tun_sender);
+			} else {
+				log_msg(ERROR_MSG, CLIENT_RT, "Failed to open UDP tunnel");
+				data->connection_status = 1;
 			}
+		} else {
+			log_msg(ERROR_MSG, CLIENT_RT, "Handshake Failed");
+			data->connection_status = 1;
 		}
 	} else {
 		log_msg(ERROR_MSG, CLIENT_RT, "Connection Failed");
@@ -265,7 +271,7 @@ void start_client_environment(int argc, char *argv[]) {
 	if (argc > 3)
 		data.port = (uint16_t)atoi(argv[3]);
 
-	TUN_CONFIG_T tun_config = {.address = CLIENT_DEFAULT_VNI, .netmask = DEFAULT_NETMASK};
+	TUN_CONFIG_T tun_config = {.address = CLIENT_DEFAULT_VNI, .netmask = DEFAULT_NETMASK, .ifname = CLIENT_TUN_INTERFACE_NAME};
 	client.tun = tun_open(&tun_config);
 	if (client.tun == NULL) {
 		log_msg(ERROR_MSG, CLIENT_RT, "Failed to open TUN device, are you running this command with root privileges?");

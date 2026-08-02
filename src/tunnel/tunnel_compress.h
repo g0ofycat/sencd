@@ -26,7 +26,8 @@
 // -- DEFINITIONS
 //--============
 
-/// @brief conditionally zstd-compress a raw packet; falls back to storing it raw if compression doesn't actually shrink it
+/// @brief conditionally zstd-compress a raw packet; falls back to storing it
+/// raw if compression doesn't actually shrink it
 /// @param *raw, raw_len: input packet
 /// @param *out_buffer, out_capacity: output buffer
 /// @return size_t: bytes written, 0 on failure

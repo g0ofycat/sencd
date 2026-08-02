@@ -20,7 +20,8 @@
 // -- CONSTS
 //--============
 
-#define TUN_INTERFACE_NAME "sencd0"
+#define SERVER_TUN_INTERFACE_NAME "sencd0"
+#define CLIENT_TUN_INTERFACE_NAME "sencd1"
 
 //--============
 // -- TYPEDEFS
@@ -31,6 +32,7 @@ typedef struct TUN_DEVICE TUN_DEVICE_T;
 typedef struct {
 	const char *address;
 	const char *netmask;
+	const char *ifname;
 } TUN_CONFIG_T;
 
 //--============
