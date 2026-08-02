@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 				"usage: sencd-server <options> <argv>?\n\n"
 				"options:\n"
 				"- CORE:\n"
-				"-    start <argv='SERVER IP': default='127.0.0.1'> <argv='PORT NUMBER': default='8080'> [Start the Server on an optional port]\n"
+				"-    start <argv='PORT NUMBER': default='8080'> [Start the Server on an optional port]\n"
 				"-    shutdown [Stop the Server, disconnecting all clients if needed]\n"
 				"- MANAGEMENT [ENVIRONMENT ONLY]:\n"
 				"-    idle [Instead of the command output, display all server outputs. To exit, use C-x]\n");

@@ -68,7 +68,8 @@ static void *server_listener(void *arg) {
 		if (ready == 0)
 			continue;
 
-		int client = server_accept(listener->server);
+		char client_ip[INET_ADDRSTRLEN];
+		int client = server_accept(listener->server, client_ip, sizeof(client_ip));
 		if (client < 0)
 			continue;
 
@@ -76,7 +77,7 @@ static void *server_listener(void *arg) {
 					listener->session_manager,
 					SESSION_SERVER,
 					client,
-					listener->ip) == NULL) {
+					client_ip) == NULL) {
 			close(client);
 		}
 	}
@@ -96,8 +97,8 @@ void start_server_environment(int argc, char *argv[]) {
 
 	uint16_t port = SERVER_DEFAULT_PORT;
 
-	if (argc > 3)
-		port = (uint16_t)atoi(argv[3]);
+	if (argc > 2)
+		port = (uint16_t)atoi(argv[2]);
 
 	if (server_start(&server, port) != 0) {
 		force_logs = 0;
@@ -131,12 +132,8 @@ void start_server_environment(int argc, char *argv[]) {
 
 	SERVER_LISTENER_DATA listener_data = {
 		.server = &server,
-		.session_manager = &session_manager,
-		.ip = SERVER_DEFAULT_IP
+		.session_manager = &session_manager
 	};
-
-	if (argc > 2)
-		listener_data.ip = argv[2];
 
 	pthread_t listener_thread;
 

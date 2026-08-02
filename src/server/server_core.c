@@ -70,12 +70,11 @@ int server_start(SERVER_T *server, uint16_t port) {
 	return 0;
 }
 
-int server_accept(SERVER_T *server) {
+int server_accept(SERVER_T *server, char *client_ip_out, size_t client_ip_size) {
 	struct sockaddr_in client_addr = {0};
 	socklen_t client_len = sizeof(client_addr);
 
-	int client_socket =
-		accept(server->socket, (struct sockaddr *)&client_addr, &client_len);
+	int client_socket = accept(server->socket, (struct sockaddr *)&client_addr, &client_len);
 
 	if (client_socket < 0) {
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to accept client");
@@ -83,15 +82,13 @@ int server_accept(SERVER_T *server) {
 		return -1;
 	}
 
-	char client_ip[INET_ADDRSTRLEN];
-
-	if (inet_ntop(AF_INET, &client_addr.sin_addr, client_ip,
-				  sizeof(client_ip)) == NULL) {
-		strcpy(client_ip, "<unknown>");
+	if (inet_ntop(AF_INET, &client_addr.sin_addr, client_ip_out, client_ip_size) == NULL) {
+		strncpy(client_ip_out, "<unknown>", client_ip_size - 1);
+		client_ip_out[client_ip_size - 1] = '\0';
 	}
 
 	log_msg(INFO_MSG, SERVER_RT, "Client connected\nAddress: %s\nPort: %u",
-			client_ip, ntohs(client_addr.sin_port));
+			client_ip_out, ntohs(client_addr.sin_port));
 
 	return client_socket;
 }
@@ -126,7 +123,7 @@ static int server_create_socket(SERVER_T *server) {
 	int opt = 1;
 
 	if (setsockopt(server->socket, SOL_SOCKET, SO_REUSEADDR, &opt,
-				   sizeof(opt)) < 0) {
+				sizeof(opt)) < 0) {
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to set SO_REUSEADDR");
 		perror("setsockopt");
 		server_cleanup(server);
@@ -144,7 +141,7 @@ static int server_bind(SERVER_T *server) {
 	server_addr.sin_port = htons(server->port);
 
 	if (bind(server->socket, (struct sockaddr *)&server_addr,
-			 sizeof(server_addr)) < 0) {
+				sizeof(server_addr)) < 0) {
 		log_msg(ERROR_MSG, SERVER_RT, "Failed to bind socket");
 		perror("bind");
 		server_cleanup(server);

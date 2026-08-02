@@ -47,8 +47,10 @@ int server_start(SERVER_T *server, uint16_t port);
 
 /// @brief accept all clients to the server
 /// @param *server
+/// @param *client_ip_out
+/// @param client_ip_size
 /// @return int: success bool
-int server_accept(SERVER_T *server);
+int server_accept(SERVER_T *server, char *client_ip_out, size_t client_ip_size);
 
 /// @brief shutdown server and disconnect all clients
 /// @param *server

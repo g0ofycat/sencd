@@ -25,8 +25,6 @@
 
 #define SHELL_PREFIX "sencd-server > "
 
-#define SERVER_DEFAULT_IP "127.0.0.1"
-
 //--============
 // -- TYPEDEFS
 //--============
@@ -42,7 +40,6 @@ typedef struct {
 typedef struct {
 	SERVER_T *server;
 	SESSION_MANAGER_T *session_manager;
-	const char *ip;
 } SERVER_LISTENER_DATA;
 
 //--============
