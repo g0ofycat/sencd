@@ -199,7 +199,7 @@ void start_client_environment(int argc, char *argv[]) {
 	TUN_CONFIG_T tun_config = {.address = CLIENT_DEFAULT_VNI, .netmask = DEFAULT_NETMASK};
 	client.tun = tun_open(&tun_config);
 	if (client.tun == NULL) {
-		log_msg(ERROR_MSG, CLIENT_RT, "Failed to open TUN device");
+		log_msg(ERROR_MSG, CLIENT_RT, "Failed to open TUN device, are you running this command with root privileges?");
 		return;
 	}
 
