@@ -124,10 +124,12 @@ TUN_DEVICE_T *tun_open(const TUN_CONFIG_T *config) {
 }
 
 ssize_t tun_read(TUN_DEVICE_T *dev, uint8_t *buffer, size_t buffer_size) {
+	log_msg(INFO_MSG, OTHER_RT, "Read packet from tunnel %s", dev);
 	return read(dev->fd, buffer, buffer_size);
 }
 
 ssize_t tun_write(TUN_DEVICE_T *dev, const uint8_t *buffer, size_t length) {
+	log_msg(INFO_MSG, OTHER_RT, "Wrote packet to tunnel %s", dev);
 	return write(dev->fd, buffer, length);
 }
 
